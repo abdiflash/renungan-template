@@ -9,31 +9,54 @@
 </head>
 <body>
 
-<!-- LOADING -->
-<div id="loading" class="hidden">
+<!-- LOADER -->
+<div id="loader">
     <p>Memuat data...</p>
 </div>
 
-<!-- ERROR MESSAGE -->
-<div id="errorMessage" class="hidden"></div>
+<!-- EMPTY STATE -->
+<div id="emptyState" class="hidden">
+    <p>Belum ada renungan hari ini.</p>
+</div>
 
-<!-- CALENDAR -->
-<div id="calendarSection">
+<!-- KALENDER -->
+<div id="calendar" class="hidden">
     <div id="calendarHeader">
-        <button id="prevMonth">‹</button>
+        <button onclick="changeMonth(-1)">‹</button>
         <span id="calendarMonthLabel"></span>
-        <button id="nextMonth">›</button>
+        <button onclick="changeMonth(1)">›</button>
     </div>
     <div id="calendarGrid"></div>
 </div>
 
-<!-- CONTENT -->
-<div id="renunganContent"></div>
+<!-- RENUNGAN CONTENT -->
+<div id="renungan" class="hidden">
+
+    <h2 id="displayDate"></h2>
+    <h3 id="displayJudul"></h3>
+    <p id="displayAyat"></p>
+    <p id="displayAyatText"></p>
+
+    <div id="displayIsi"></div>
+
+    <h4>Refleksi:</h4>
+    <p id="displayRefleksi"></p>
+
+    <p>Tahun Ajaran: <span id="academicYear"></span></p>
+
+    <!-- AUDIO -->
+    <button id="audioControl" onclick="toggleAudio()" style="display:none;"></button>
+    <audio id="audioPlayer" controls style="display:none;">
+        <source id="audioSource" src="" type="audio/mpeg">
+    </audio>
+
+</div>
 
 <!-- FOOTER -->
 <footer>
     <p id="footerSchoolName"></p>
     <a id="footerSchoolLink" target="_blank"></a>
+    <p>Pengunjung: <span id="count">0</span></p>
 </footer>
 
 <script src="config.js"></script>
