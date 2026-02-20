@@ -1,109 +1,104 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Renungan Harian</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template Renungan Harian</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/abdiflash/renungan-engine@main/engine/style.css">
 </head>
 
 <body>
 
-<header class="app-header">
+<header style="text-align:center; padding:20px;">
   <h1>Renungan Harian</h1>
   <p>Tahun Ajaran: <strong id="academicYear">Memuat...</strong></p>
 </header>
 
-<main class="container">
+<main style="max-width:800px; margin:auto; padding:20px;">
 
   <!-- LOADER -->
-  <div id="loader" class="loading">
-    ⏳ Sedang mengambil data renungan...
+  <div id="loader">
+    ⏳ Memuat data...
   </div>
 
   <!-- RENUNGAN -->
   <section id="renungan" class="hidden">
 
-    <header>
-      <time id="displayDate"></time>
+    <header style="margin-bottom:20px;">
+      <h3 id="displayDate"></h3>
 
-      <div class="audio-container">
-        <div class="action-area-top">
-          <button class="btn-elegant" onclick="showCalendarView()">📅 Buka Kalender</button>
-          <button id="audioControl" class="btn-elegant" onclick="toggleAudio()">▶️ Putar Audio</button>
-        </div>
-
-        <audio id="audioPlayer" controls class="audio-slider">
-          <source id="audioSource" src="" type="audio/mpeg">
-        </audio>
+      <div style="margin-top:10px;">
+        <button onclick="showCalendarView()">📅 Buka Kalender</button>
+        <button id="audioControl" onclick="toggleAudio()">▶️ Putar Audio</button>
       </div>
+
+      <audio id="audioPlayer" controls style="margin-top:10px; width:100%;">
+        <source id="audioSource" src="" type="audio/mpeg">
+      </audio>
     </header>
 
     <article>
-      <h3 id="displayJudul"></h3>
+      <h2 id="displayJudul"></h2>
 
-      <div class="ayat-box">
-        <span id="displayAyat" class="ayat-ref"></span>
-        <blockquote id="displayAyatText" class="ayat-text"></blockquote>
-      </div>
+      <p><strong id="displayAyat"></strong></p>
+      <blockquote id="displayAyatText"></blockquote>
 
       <div id="displayIsi"></div>
 
-      <div class="refleksi-box">
-        <div class="refleksi-label">Refleksi</div>
-        <p id="displayRefleksi" class="refleksi-content"></p>
-      </div>
+      <h4>Refleksi:</h4>
+      <p id="displayRefleksi"></p>
     </article>
 
-    <div class="reader-stats">
-      📖 Hari ini sudah dibaca oleh <span id="count">0</span> orang
-    </div>
+    <p style="margin-top:20px;">
+      📖 Hari ini sudah dibaca oleh <strong id="count">0</strong> orang
+    </p>
 
   </section>
 
-  <!-- EMPTY -->
-  <section id="emptyState" class="hidden">
+  <!-- EMPTY STATE -->
+  <section id="emptyState" class="hidden" style="text-align:center; padding:20px;">
     <h3>Belum ada renungan hari ini.</h3>
-    <button class="btn-elegant" onclick="showCalendarView()">📅 Buka Kalender</button>
+    <button onclick="showCalendarView()">📅 Buka Kalender</button>
   </section>
 
   <!-- CALENDAR -->
-  <section id="calendar" class="hidden">
+  <section id="calendar" class="hidden" style="margin-top:30px;">
 
-    <div class="calendar-header">
-      <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <button onclick="changeMonth(-1)">◀</button>
       <h3 id="calendarMonthLabel"></h3>
-      <button class="nav-btn" onclick="changeMonth(1)">▶</button>
+      <button onclick="changeMonth(1)">▶</button>
     </div>
 
-    <div class="calendar-grid" style="margin-bottom: 5px;">
-      <div class="day-name">Min</div>
-      <div class="day-name">Sen</div>
-      <div class="day-name">Sel</div>
-      <div class="day-name">Rab</div>
-      <div class="day-name">Kam</div>
-      <div class="day-name">Jum</div>
-      <div class="day-name">Sab</div>
+    <div style="display:grid; grid-template-columns:repeat(7,1fr); margin-top:10px; font-weight:bold; text-align:center;">
+      <div>Min</div>
+      <div>Sen</div>
+      <div>Sel</div>
+      <div>Rab</div>
+      <div>Kam</div>
+      <div>Jum</div>
+      <div>Sab</div>
     </div>
 
-    <div id="calendarGrid" class="calendar-grid"></div>
+    <div id="calendarGrid" style="display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-top:10px;"></div>
 
-    <div class="calendar-footer">
-      <button class="btn-close-calendar" onclick="hideCalendarView()">❌ Tutup Kalender</button>
+    <div style="text-align:center; margin-top:15px;">
+      <button onclick="hideCalendarView()">❌ Tutup Kalender</button>
     </div>
 
   </section>
 
 </main>
 
-<footer class="app-footer">
+<footer style="text-align:center; padding:20px;">
   <p>&copy; 2026 <strong id="footerSchoolName">Sekolah</strong></p>
-  <p><a href="#" id="footerSchoolLink" class="footer-link" target="_blank"></a></p>
+  <p><a href="#" id="footerSchoolLink" target="_blank"></a></p>
 </footer>
 
 <script src="config.js"></script>
-<script src="app.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/abdiflash/renungan-engine@main/engine/app.js"></script>
 
 </body>
 </html>
