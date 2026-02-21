@@ -287,65 +287,30 @@ button { font-family: inherit; cursor: pointer; border: none; }
   #displayIsi, .ayat-text, .refleksi-content { text-align: left; }
 }
 
-/* =====================================
-   Base Calendar Day (transisi halus)
-===================================== */
-.calendar-day {
-  transition: all 0.25s ease;
-  border-radius: 14px;
+/* H+1 dan seterusnya (future unlocked) */
+.date-cell.available.future-unlocked {
+    background: linear-gradient(135deg, #5fa87c, #3f7a5c); /* hijau lebih gelap */
+    color: #eaf6ed; /* teks lebih terang agar kontras */
+    font-weight: 600;
 }
 
-/* =====================================
-   H+1 dan seterusnya (future unlocked)
-   Hijau lebih dalam & lebih tegas
-===================================== */
-.calendar-day.future-unlocked {
-  background: linear-gradient(135deg, #7fbf9a, #5fa87c);
-  color: #083d2b;
-  font-weight: 600;
+.date-cell.available.future-unlocked:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
-.calendar-day.future-unlocked:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+/* Hari ini */
+.date-cell.today {
+    background: #dff3e6; /* tetap hijau lembut */
+    border: 3px solid #145a32; /* hijau tua, tebal */
+    font-weight: 700;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(20, 90, 50, 0.3); /* shadow halus agar elegan */
+    border-radius: 12px; /* sedikit membulat lebih lembut */
 }
 
-/* =====================================
-   Hari ini (Elegant Highlight)
-===================================== */
-.calendar-day.today {
-  background: #dff3e6;
-  border: 3px solid #145a32;
-  font-weight: 700;
-  position: relative;
-}
-
-/* Soft outer glow (lebih premium dari orange) */
-.calendar-day.today::before {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border-radius: 18px;
-  background: rgba(20, 90, 50, 0.12);
-  z-index: -1;
-}
-
-/* Dot indicator kecil (subtle tapi classy) */
-.calendar-day.today::after {
-  content: "";
-  width: 6px;
-  height: 6px;
-  background: #145a32;
-  border-radius: 50%;
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-/* =====================================
-   Hover Effect Global
-===================================== */
-.calendar-day:hover {
-  cursor: pointer;
+/* Optional: hover untuk hari ini */
+.date-cell.today:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(20, 90, 50, 0.4);
 }
