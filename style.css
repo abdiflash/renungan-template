@@ -230,6 +230,17 @@ button { font-family: inherit; cursor: pointer; border: none; }
     box-shadow: 0 6px 18px rgba(20, 90, 50, 0.4);
 }
 
+.date-cell.available.future-unlocked {
+    background: linear-gradient(135deg, #5fa87c, #3f7a5c); /* hijau gelap */
+    color: #eaf6ed;
+    font-weight: 600;
+}
+
+.date-cell.available.future-unlocked:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
 .date-cell.locked { background-color: #eee; color: #bbb; cursor: not-allowed; }
 
 .calendar-footer {
