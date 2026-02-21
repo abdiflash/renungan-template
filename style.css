@@ -213,19 +213,40 @@ button { font-family: inherit; cursor: pointer; border: none; }
   position: relative; transition: all 0.2s ease;
 }
 
-.date-cell.available { background-color: var(--accent); color: var(--primary-dark); cursor: pointer; }
-.date-cell.available:hover { background-color: var(--primary); color: white; transform: scale(1.1); z-index: 2; }
-.date-cell.today { border: 3px solid #145a32; font-weight: 700; background: #dff3e6; box-shadow: 0 4px 12px rgba(20,90,50,0.3); border-radius: 12px; }
+.date-cell.available { 
+    background-color: var(--accent); 
+    color: var(--primary-dark); 
+    cursor: pointer; 
+}
+.date-cell.available:hover { 
+    background-color: var(--primary); 
+    color: white; 
+    transform: scale(1.1); 
+    z-index: 2; 
+}
+.date-cell.today { 
+    border: 3px solid #145a32; 
+    font-weight: 700; 
+    background: #dff3e6; 
+    box-shadow: 0 4px 12px rgba(20,90,50,0.3); 
+    border-radius: 12px; 
+}
 
-.date-cell.locked { background-color: #eee; color: #bbb; cursor: not-allowed; }
+.date-cell.locked { 
+    background-color: #eee; 
+    color: #bbb; 
+    cursor: not-allowed; 
+}
 
-/* FUTURE UNLOCKED (H+1 ke atas) */
-.date-cell.available.future-unlocked {
+/* ======================
+   FUTURE UNLOCKED (H+1 ke atas)
+====================== */
+.date-cell.future-unlocked {
     background: linear-gradient(135deg, #c0392b, #8e2c2c) !important; /* merah gelap */
     color: #fff !important;
-    font-weight: 600;
+    font-weight: 600 !important;
 }
-.date-cell.available.future-unlocked:hover {
+.date-cell.future-unlocked:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
@@ -247,6 +268,15 @@ button { font-family: inherit; cursor: pointer; border: none; }
   text-decoration: none;
   font-size: 1.1rem;
   font-weight: 600;
+}
+
+/* Tombol tutup kalender di tengah */
+.calendar-footer {
+    display: flex !important;
+    justify-content: center !important;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
 }
 
 .loading { padding: 50px; text-align: center; color: var(--text-muted); }
