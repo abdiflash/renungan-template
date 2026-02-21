@@ -231,7 +231,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 
 .date-cell.available.future-unlocked {
-    background: linear-gradient(135deg, #2e563f, #1b3b2d); /* hijau gelap */
+    background: linear-gradient(135deg, #8B0000, #5C0000); /* hijau gelap */
     color: #eaf6ed;
     font-weight: 600;
 }
