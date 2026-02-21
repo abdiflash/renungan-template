@@ -215,64 +215,19 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 .date-cell.available { background-color: var(--accent); color: var(--primary-dark); cursor: pointer; }
 .date-cell.available:hover { background-color: var(--primary); color: white; transform: scale(1.1); z-index: 2; }
-
-.date-cell.today {
-    background: #dff3e6;
-    border: 3px solid #145a32;
-    font-weight: 700;
-    position: relative;
-    box-shadow: 0 4px 12px rgba(20, 90, 50, 0.3);
-    border-radius: 12px;
-}
-
-.date-cell.today:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(20, 90, 50, 0.4);
-}
-
-.date-cell.available.future-unlocked {
-    background: linear-gradient(135deg, #8B0000, #5C0000); /* merah gelap */
-    color: #fff;
-    font-weight: 600;
-}
-
-.date-cell.available.future-unlocked:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-}
+.date-cell.today { border: 3px solid #145a32; font-weight: 700; background: #dff3e6; box-shadow: 0 4px 12px rgba(20,90,50,0.3); border-radius: 12px; }
 
 .date-cell.locked { background-color: #eee; color: #bbb; cursor: not-allowed; }
 
-.calendar-footer {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
-}
-
-.btn-close-calendar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 20px;
-    font-size: 14px;
+/* FUTURE UNLOCKED (H+1 ke atas) */
+.date-cell.available.future-unlocked {
+    background: linear-gradient(135deg, #c0392b, #8e2c2c) !important; /* merah gelap */
+    color: #fff !important;
     font-weight: 600;
-    border-radius: 50px;
-    transition: all 0.3s ease;
-    min-width: 145px;
-    height: 42px;
-    border: 2px solid var(--primary);
-    background: white;
-    color: var(--primary);
-    font-family: inherit;
 }
-
-.btn-close-calendar:hover {
-    background: #f0fdf4;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+.date-cell.available.future-unlocked:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
 
 /* ======================
@@ -296,11 +251,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 .loading { padding: 50px; text-align: center; color: var(--text-muted); }
 .hidden { display: none !important; }
-
-@keyframes slideUpFade {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 
 /* Mobile Tweak */
 @media (max-width: 480px) {
