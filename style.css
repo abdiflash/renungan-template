@@ -178,7 +178,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   border-radius: 50px;   
   background-color: var(--accent);
   outline: none;
-  filter: sepia(10%) saturate(100%) hue-rotate(185deg); /* Warna player diselaraskan ke biru */
+  filter: sepia(10%) saturate(100%) hue-rotate(185deg);
 }
 
 #audioPlayer {
@@ -187,10 +187,15 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 
 /* ======================
-   5. CONTENT AREA
+   5. CONTENT AREA (MENGGUNAKAN SATUAN EM AGAR BISA ZOOM)
 ====================== */
+#articleContent {
+  font-size: 100%; /* Induk skala zoom */
+  transition: font-size 0.2s ease-in-out;
+}
+
 #displayJudul {
-  font-size: 1.5rem;
+  font-size: 1.4em; /* Mengikuti % dari #articleContent */
   color: var(--primary-dark);
   margin-bottom: 1.2rem;
   text-align: center;
@@ -210,25 +215,26 @@ button { font-family: inherit; cursor: pointer; border: none; }
   font-weight: bold; 
   color: var(--primary); 
   margin-bottom: 6px; 
+  font-size: 1em; /* Mengikuti % zoom */
 }
 
 .ayat-text { 
   font-style: italic; 
   color: #334155; 
   margin: 0; 
-  font-size: 1.05rem; 
+  font-size: 1em; /* Mengikuti % zoom */
   text-align: left; 
 }
 
 #displayIsi { 
-  font-size: 1.05rem; 
+  font-size: 1em; /* Mengikuti % zoom */
   color: var(--text-main); 
   text-align: left; 
   margin-bottom: 25px; 
   line-height: 1.7; 
 }
 
-/* Kotak Refleksi (Semburat Amber/Emas agar kontras elegan dengan Navy) */
+/* Kotak Refleksi */
 .refleksi-box {
   background: #fffdf5; 
   padding: 16px;
@@ -238,7 +244,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 
 .refleksi-label { 
-  font-size: 0.75rem; 
+  font-size: 0.75em; 
   font-weight: bold; 
   color: #b45309; 
   text-transform: uppercase; 
@@ -250,6 +256,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   margin: 0; 
   font-style: italic; 
   color: #451a03; 
+  font-size: 0.95em; /* Mengikuti % zoom */
   text-align: left; 
 }
 
@@ -327,11 +334,9 @@ button { font-family: inherit; cursor: pointer; border: none; }
   position: relative; transition: all 0.2s ease;
 }
 
-/* Tanggal Tersedia */
 .date-cell.available { background-color: var(--accent); color: var(--primary); cursor: pointer; }
 .date-cell.available:hover { background-color: var(--primary); color: white; transform: scale(1.1); z-index: 2; }
 
-/* Hari Ini (Bintang Utama) */
 .date-cell.today {
   background: #dbeafe; 
   border: 3px solid var(--primary); 
@@ -347,7 +352,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
   box-shadow: 0 6px 18px rgba(27, 54, 93, 0.35);
 }
 
-/* Hari Mendatang Unlocked */
 .date-cell.available.future-unlocked {
   background: linear-gradient(135deg, #2563eb, var(--primary)); 
   color: #ffffff; 
@@ -420,10 +424,9 @@ button { font-family: inherit; cursor: pointer; border: none; }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Mobile Responsive */
 @media (max-width: 480px) {
   .btn-elegant { min-width: 120px; padding: 8px 12px; font-size: 0.8rem; }
   .action-area-top { gap: 6px; }
-  #displayJudul { font-size: 1.3rem; }
+  #displayJudul { font-size: 1.3em; }
   #displayIsi, .ayat-text, .refleksi-content { text-align: left; }
 }
