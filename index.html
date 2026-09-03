@@ -29,7 +29,7 @@
     <header>
       <div class="date-navigation">
         <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
-        <time id="displayDate"></time>
+        <time class="displayDateText"></time>
         <button class="btn-nav-day" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
       </div>
 
@@ -77,9 +77,18 @@
 
   </section>
 
-  <!-- Tampilan Jika Data Kosong -->
+  <!-- Tampilan Jika Data Kosong (Dilengkapi Navigasi Tanggal) -->
   <section id="emptyState" class="hidden">
-    <h3>Belum ada renungan untuk tanggal ini.</h3>
+    <div class="date-navigation" style="justify-content: center; margin-bottom: 15px;">
+      <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
+      <time class="displayDateText" style="font-weight: bold; margin: 0 10px;"></time>
+      <button class="btn-nav-day" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
+    </div>
+
+    <div style="text-align: center; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+      <h3 style="margin-top:0; color:#333;">Belum ada renungan untuk tanggal ini.</h3>
+      <p style="color: #666; font-size: 14px; margin-bottom: 0;">Gunakan tombol panah ◀ atau ▶ di atas untuk berpindah tanggal.</p>
+    </div>
   </section>
 
 </main>
@@ -92,10 +101,9 @@
 <script src="config.js"></script>
 <script>
   let currentFontSize = 100;
+  let currentActiveDateStr = "";
 
-  // Jalankan saat halaman selesai dimuat
   document.addEventListener('DOMContentLoaded', function() {
-    // Set identitas sekolah dari config
     if (typeof CONFIG !== 'undefined') {
       const schName = document.getElementById('footerSchoolName');
       const schLink = document.getElementById('footerSchoolLink');
@@ -106,18 +114,18 @@
       }
     }
 
-    // Ambil tanggal hari ini (YYYY-MM-DD)
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${yyyy}-${mm}-${dd}`;
     
-    // Muat data renungan awal
-    loadData(`${yyyy}-${mm}-${dd}`);
+    // Muat data awal
+    loadData(todayStr, true);
   });
 
-  // Fungsi utama pemuat data dari Apps Script
-  function loadData(dateStr) {
+  function loadData(dateStr, isInitialLoad = false) {
+    currentActiveDateStr = dateStr;
     const loader = document.getElementById('loader');
     const renunganSec = document.getElementById('renungan');
     const emptySec = document.getElementById('emptyState');
@@ -151,16 +159,9 @@
             document.getElementById('academicYear').innerText = resData.data.academicYear;
           }
 
-          // Format Tampilan Tanggal Navigasi
-          const dateObj = new Date(dateStr + 'T00:00:00');
-          const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-          const displayElem = document.getElementById('displayDate');
-          if (displayElem) {
-            displayElem.innerText = dateObj.toLocaleDateString('id-ID', options);
-            displayElem.dataset.isoDate = dateStr;
-          }
+          updateDateText(dateStr);
 
-          // Pemutar Audio
+          // Audio Player
           const audioPlayer = document.getElementById('audioPlayer');
           const audioSource = document.getElementById('audioSource');
           const audioControl = document.getElementById('audioControl');
@@ -178,35 +179,51 @@
           }
 
         } else {
+          // Jika baru pertama dibuka dan tanggal hari ini kosong, alihkan otomatis ke tanggal pertama yang ada data
+          if (isInitialLoad && resData.availableDates && resData.availableDates.length > 0) {
+            loadData(resData.availableDates[0], false);
+            return;
+          }
+
           if (emptySec) emptySec.classList.remove('hidden');
+          if (resData.academicYear) {
+            document.getElementById('academicYear').innerText = resData.academicYear;
+          }
+          updateDateText(dateStr);
         }
       })
       .catch(err => {
         console.error("Gagal mengambil data:", err);
         if (loader) loader.classList.add('hidden');
         if (emptySec) emptySec.classList.remove('hidden');
+        updateDateText(dateStr);
       });
   }
 
-  // Navigasi Tanggal (Hari Sebelum / Sesudah)
+  function updateDateText(dateStr) {
+    const dateObj = new Date(dateStr + 'T00:00:00');
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const formatted = dateObj.toLocaleDateString('id-ID', options);
+
+    const elems = document.querySelectorAll('.displayDateText');
+    elems.forEach(el => {
+      el.innerText = formatted;
+    });
+  }
+
   function navigateDay(offset) {
-    const displayElem = document.getElementById('displayDate');
-    let baseDate = new Date();
+    if (!currentActiveDateStr) return;
 
-    if (displayElem && displayElem.dataset.isoDate) {
-      baseDate = new Date(displayElem.dataset.isoDate + 'T00:00:00');
-    }
-
+    const baseDate = new Date(currentActiveDateStr + 'T00:00:00');
     baseDate.setDate(baseDate.getDate() + offset);
 
     const yyyy = baseDate.getFullYear();
     const mm = String(baseDate.getMonth() + 1).padStart(2, '0');
     const dd = String(baseDate.getDate()).padStart(2, '0');
 
-    loadData(`${yyyy}-${mm}-${dd}`);
+    loadData(`${yyyy}-${mm}-${dd}`, false);
   }
 
-  // Zoom Ukuran Teks Artikel
   function changeFontSize(step) {
     currentFontSize += step * 10;
     if (currentFontSize < 80) currentFontSize = 80;
@@ -218,7 +235,6 @@
     }
   }
 
-  // Putar / Jeda Audio
   function toggleAudio() {
     const player = document.getElementById('audioPlayer');
     const btn = document.getElementById('audioControl');
@@ -233,7 +249,6 @@
     }
   }
 
-  // Bagikan ke WhatsApp
   function shareToWhatsApp() {
     const judul = document.getElementById('displayJudul')?.innerText || '';
     const ayat = document.getElementById('displayAyat')?.innerText || '';
