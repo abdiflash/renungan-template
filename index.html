@@ -123,7 +123,7 @@
   function changeFontSize(step) {
     currentFontSize += step * 10;
     if (currentFontSize < 80) currentFontSize = 80;
-    if (currentFontSize > 150) currentFontSize = 150;
+    if (currentFontSize > 160) currentFontSize = 160;
     
     const target = document.getElementById('articleContent');
     if (target) {
@@ -133,6 +133,13 @@
 
   // 2. Navigasi Harian (Kemarin / Besok)
   function navigateDay(offset) {
+    // Ambil tanggal ISO yang tersimpan pada elemen displayDate jika ada
+    const displayElem = document.getElementById('displayDate');
+    if (displayElem && displayElem.dataset.isoDate) {
+      activeNavDate = new Date(displayElem.dataset.isoDate + 'T00:00:00');
+    }
+
+    // Geser tanggal sesuai offset (-1 atau +1)
     activeNavDate.setDate(activeNavDate.getDate() + offset);
     
     const yyyy = activeNavDate.getFullYear();
@@ -140,14 +147,62 @@
     const dd = String(activeNavDate.getDate()).padStart(2, '0');
     const targetDateStr = `${yyyy}-${mm}-${dd}`;
 
-    // Memanggil fungsi dari renungan-engine (app.js)
-    if (typeof selectDate === 'function') {
-      selectDate(targetDateStr);
-    } else if (typeof loadRenunganByDate === 'function') {
-      loadRenunganByDate(targetDateStr);
-    } else if (typeof fetchRenungan === 'function') {
-      fetchRenungan(targetDateStr);
+    // Cek pemanggilan fungsi dari renungan-engine
+    if (typeof window.selectDate === 'function') {
+      window.selectDate(targetDateStr);
+    } else if (typeof window.loadRenungan === 'function') {
+      window.loadRenungan(targetDateStr);
+    } else if (typeof window.loadRenunganByDate === 'function') {
+      window.loadRenunganByDate(targetDateStr);
+    } else if (typeof window.fetchRenungan === 'function') {
+      window.fetchRenungan(targetDateStr);
+    } else if (typeof CONFIG !== 'undefined' && CONFIG.API_URL) {
+      // Fallback langsung panggil API Google Apps Script
+      fetchRenunganDirect(targetDateStr);
     }
+  }
+
+  // Pemuat data cadangan jika engine CDN tidak langsung merespons
+  function fetchRenunganDirect(dateStr) {
+    const loader = document.getElementById('loader');
+    const renunganSec = document.getElementById('renungan');
+    const emptySec = document.getElementById('emptyState');
+
+    if (loader) loader.classList.remove('hidden');
+    if (renunganSec) renunganSec.classList.add('hidden');
+    if (emptySec) emptySec.classList.add('hidden');
+
+    fetch(`${CONFIG.API_URL}?date=${dateStr}`)
+      .then(res => res.json())
+      .then(resData => {
+        if (loader) loader.classList.add('hidden');
+
+        if (resData.status === 'success' && resData.data) {
+          if (renunganSec) renunganSec.classList.remove('hidden');
+          
+          document.getElementById('displayJudul').innerText = resData.data.judul || '';
+          document.getElementById('displayAyat').innerText = resData.data.ayatRef || '';
+          document.getElementById('displayAyatText').innerText = resData.data.ayatText || '';
+          document.getElementById('displayIsi').innerHTML = resData.data.isi || '';
+          document.getElementById('displayRefleksi').innerText = resData.data.refleksi || '';
+          document.getElementById('count').innerText = resData.data.views || 0;
+
+          const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+          const dateObj = new Date(dateStr + 'T00:00:00');
+          const displayElem = document.getElementById('displayDate');
+          if (displayElem) {
+            displayElem.innerText = dateObj.toLocaleDateString('id-ID', dateOptions);
+            displayElem.dataset.isoDate = dateStr; // Simpan penanda tanggal aktif
+          }
+        } else {
+          if (emptySec) emptySec.classList.remove('hidden');
+        }
+      })
+      .catch(err => {
+        console.error("Gagal memuat renungan:", err);
+        if (loader) loader.classList.add('hidden');
+        if (emptySec) emptySec.classList.remove('hidden');
+      });
   }
 
   // 3. Fitur Bagikan ke WhatsApp
