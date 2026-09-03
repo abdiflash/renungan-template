@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template Renungan Harian</title>
+
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="app-header">
+  <h1>Renungan Harian</h1>
+  <p>Tahun Ajaran: <strong id="academicYear">Memuat...</strong></p>
+</header>
+
+<main class="container">
+
+  <div id="loader" class="loading">
+    ⏳ Memuat data...
+  </div>
+
+  <section id="renungan" class="hidden">
+
+    <header>
+      <div class="date-navigation">
+        <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
+        <time id="displayDate"></time>
+        <button class="btn-nav-day" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
+      </div>
+
+      <div class="audio-container">
+        <div class="action-area-top">
+          <div class="font-controls">
+            <button class="btn-font" onclick="changeFontSize(-1)" title="Kecilkan Teks">A-</button>
+            <button class="btn-font" onclick="changeFontSize(1)" title="Besarkan Teks">A+</button>
+          </div>
+
+          <button class="btn-elegant" onclick="showCalendarView()">📅 Buka Kalender</button>
+          <button id="audioControl" class="btn-elegant" onclick="toggleAudio()">▶️ Putar Audio</button>
+        </div>
+
+        <audio id="audioPlayer" controls class="audio-slider">
+          <source id="audioSource" src="" type="audio/mpeg">
+        </audio>
+      </div>
+    </header>
+
+    <article id="articleContent">
+      <h3 id="displayJudul"></h3>
+
+      <div class="ayat-box">
+        <span id="displayAyat" class="ayat-ref"></span>
+        <blockquote id="displayAyatText" class="ayat-text"></blockquote>
+      </div>
+
+      <div id="displayIsi"></div>
+
+      <div class="refleksi-box">
+        <div class="refleksi-label">Refleksi</div>
+        <p id="displayRefleksi" class="refleksi-content"></p>
+      </div>
+    </article>
+
+    <div class="article-footer-actions">
+      <button class="btn-share-wa" onclick="shareToWhatsApp()">
+        📲 Bagikan ke WhatsApp
+      </button>
+      
+      <div class="reader-stats">
+        📖 Hari ini sudah dibaca oleh <span id="count">0</span> orang
+      </div>
+    </div>
+
+  </section>
+
+  <section id="emptyState" class="hidden">
+    <h3>Belum ada renungan hari ini.</h3>
+    <button class="btn-elegant" onclick="showCalendarView()">📅 Buka Kalender</button>
+  </section>
+
+  <section id="calendar" class="hidden">
+
+    <div class="calendar-header">
+      <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
+      <h3 id="calendarMonthLabel"></h3>
+      <button class="nav-btn" onclick="changeMonth(1)">▶</button>
+    </div>
+
+    <div class="calendar-grid" style="margin-bottom:5px;">
+      <div class="day-name">Min</div>
+      <div class="day-name">Sen</div>
+      <div class="day-name">Sel</div>
+      <div class="day-name">Rab</div>
+      <div class="day-name">Kam</div>
+      <div class="day-name">Jum</div>
+      <div class="day-name">Sab</div>
+    </div>
+
+    <div id="calendarGrid" class="calendar-grid"></div>
+
+    <div class="calendar-footer">
+      <button class="btn-close-calendar" onclick="hideCalendarView()"> Tutup Kalender</button>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="app-footer">
+  <p>&copy; 2026 <strong id="footerSchoolName">Sekolah</strong></p>
+  <p><a href="#" id="footerSchoolLink" class="footer-link" target="_blank"></a></p>
+</footer>
+
+<script src="config.js"></script>
+<script>
+  let currentFontSize = 100; // Persentase font standar
+
+  function changeFontSize(step) {
+    currentFontSize += step * 10;
+    if (currentFontSize < 80) currentFontSize = 80;
+    if (currentFontSize > 150) currentFontSize = 150;
+    document.getElementById('articleContent').style.fontSize = currentFontSize + '%';
+  }
+
+  function shareToWhatsApp() {
+    const judul = document.getElementById('displayJudul').innerText;
+    const ayat = document.getElementById('displayAyat').innerText;
+    const url = window.location.href;
+    const text = `*${judul}*\n_${ayat}_\n\nMari baca renungan hari ini melalui tautan berikut:\n${url}`;
+    
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/gh/abdiflash/renungan-engine@main/engine/app.js"></script>
+
+</body>
+</html>
