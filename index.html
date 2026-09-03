@@ -102,7 +102,7 @@
     <div id="calendarGrid" class="calendar-grid"></div>
 
     <div class="calendar-footer">
-      <button class="btn-close-calendar" onclick="hideCalendarView()"> Tutup Kalender</button>
+      <button class="btn-close-calendar" onclick="hideCalendarView()">Tutup Kalender</button>
     </div>
 
   </section>
@@ -116,24 +116,52 @@
 
 <script src="config.js"></script>
 <script>
-  let currentFontSize = 100; // Persentase font standar
+  let currentFontSize = 100;
+  let activeNavDate = new Date();
 
+  // 1. Pengatur Zoom Font Artikel
   function changeFontSize(step) {
     currentFontSize += step * 10;
     if (currentFontSize < 80) currentFontSize = 80;
     if (currentFontSize > 150) currentFontSize = 150;
-    document.getElementById('articleContent').style.fontSize = currentFontSize + '%';
+    
+    const target = document.getElementById('articleContent');
+    if (target) {
+      target.style.fontSize = currentFontSize + '%';
+    }
   }
 
+  // 2. Navigasi Harian (Kemarin / Besok)
+  function navigateDay(offset) {
+    activeNavDate.setDate(activeNavDate.getDate() + offset);
+    
+    const yyyy = activeNavDate.getFullYear();
+    const mm = String(activeNavDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(activeNavDate.getDate()).padStart(2, '0');
+    const targetDateStr = `${yyyy}-${mm}-${dd}`;
+
+    // Memanggil fungsi dari renungan-engine (app.js)
+    if (typeof selectDate === 'function') {
+      selectDate(targetDateStr);
+    } else if (typeof loadRenunganByDate === 'function') {
+      loadRenunganByDate(targetDateStr);
+    } else if (typeof fetchRenungan === 'function') {
+      fetchRenungan(targetDateStr);
+    }
+  }
+
+  // 3. Fitur Bagikan ke WhatsApp
   function shareToWhatsApp() {
-    const judul = document.getElementById('displayJudul').innerText;
-    const ayat = document.getElementById('displayAyat').innerText;
+    const judul = document.getElementById('displayJudul')?.innerText || '';
+    const ayat = document.getElementById('displayAyat')?.innerText || '';
     const url = window.location.href;
     const text = `*${judul}*\n_${ayat}_\n\nMari baca renungan hari ini melalui tautan berikut:\n${url}`;
     
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
   }
 </script>
+
+<!-- CDN Engine Utama -->
 <script src="https://cdn.jsdelivr.net/gh/abdiflash/renungan-engine@main/engine/app.js"></script>
 
 </body>
