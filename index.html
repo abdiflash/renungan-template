@@ -77,7 +77,7 @@
 
   </section>
 
-  <!-- Tampilan Jika Data Kosong (Dilengkapi Navigasi Tanggal) -->
+  <!-- Tampilan Jika Data Kosong -->
   <section id="emptyState" class="hidden">
     <div class="date-navigation" style="justify-content: center; margin-bottom: 15px;">
       <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
@@ -120,9 +120,23 @@
     const dd = String(today.getDate()).padStart(2, '0');
     const todayStr = `${yyyy}-${mm}-${dd}`;
     
-    // Muat data awal
     loadData(todayStr, true);
   });
+
+  // Helper pengolah tanggal yang aman dari "Invalid Date"
+  function parseDate(dateStr) {
+    if (!dateStr) return null;
+    
+    let clean = String(dateStr).split('T')[0].split(' ')[0].trim();
+    let parts = clean.split('-');
+    
+    if (parts.length === 3 && parts[0].length === 4) {
+      return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    }
+    
+    let d = new Date(dateStr);
+    return !isNaN(d.getTime()) ? d : null;
+  }
 
   function loadData(dateStr, isInitialLoad = false) {
     currentActiveDateStr = dateStr;
@@ -148,6 +162,10 @@
         if (resData.status === 'success' && resData.data) {
           if (renunganSec) renunganSec.classList.remove('hidden');
 
+          if (resData.data.date) {
+            currentActiveDateStr = resData.data.date;
+          }
+
           document.getElementById('displayJudul').innerText = resData.data.judul || '';
           document.getElementById('displayAyat').innerText = resData.data.ayatRef || '';
           document.getElementById('displayAyatText').innerText = resData.data.ayatText || '';
@@ -159,12 +177,14 @@
             document.getElementById('academicYear').innerText = resData.data.academicYear;
           }
 
-          updateDateText(dateStr);
+          updateDateText(currentActiveDateStr);
 
-          // Audio Player
+          // Audio Player Control
           const audioPlayer = document.getElementById('audioPlayer');
           const audioSource = document.getElementById('audioSource');
           const audioControl = document.getElementById('audioControl');
+
+          if (audioControl) audioControl.innerText = "▶️ Putar Audio";
           
           if (resData.data.audio && resData.data.audio.trim() !== '') {
             if (audioSource) audioSource.src = resData.data.audio;
@@ -179,7 +199,6 @@
           }
 
         } else {
-          // Jika baru pertama dibuka dan tanggal hari ini kosong, alihkan otomatis ke tanggal pertama yang ada data
           if (isInitialLoad && resData.availableDates && resData.availableDates.length > 0) {
             loadData(resData.availableDates[0], false);
             return;
@@ -201,11 +220,17 @@
   }
 
   function updateDateText(dateStr) {
-    const dateObj = new Date(dateStr + 'T00:00:00');
+    const dateObj = parseDate(dateStr);
+    const elems = document.querySelectorAll('.displayDateText');
+
+    if (!dateObj) {
+      elems.forEach(el => { el.innerText = dateStr || ''; });
+      return;
+    }
+
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const formatted = dateObj.toLocaleDateString('id-ID', options);
 
-    const elems = document.querySelectorAll('.displayDateText');
     elems.forEach(el => {
       el.innerText = formatted;
     });
@@ -214,7 +239,9 @@
   function navigateDay(offset) {
     if (!currentActiveDateStr) return;
 
-    const baseDate = new Date(currentActiveDateStr + 'T00:00:00');
+    let baseDate = parseDate(currentActiveDateStr);
+    if (!baseDate) baseDate = new Date();
+
     baseDate.setDate(baseDate.getDate() + offset);
 
     const yyyy = baseDate.getFullYear();
