@@ -3,10 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Template Renungan Harian</title>
+  <title>Renungan Harian</title>
 
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* Styling Kalender Khusus - Nuansa Biru Navy */
+    .app-header {
+      background-color: #1b3058 !important;
+    }
+
+    .calendar-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      max-width: 450px;
+      margin: 0 auto;
+    }
+
+    .cal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .cal-header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: #1b3058;
+      font-weight: 700;
+    }
+
+    .btn-cal-nav {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid #1b3058;
+      background: transparent;
+      color: #1b3058;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-cal-nav:hover {
+      background-color: #1b3058;
+      color: #ffffff;
+    }
+
+    .cal-grid-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #888888;
+      margin-bottom: 12px;
+    }
+
+    .cal-grid-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .cal-day-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #b0b0b0;
+      background-color: #f2f2f2;
+      cursor: default;
+      user-select: none;
+      box-sizing: border-box;
+    }
+
+    .cal-day-cell.available {
+      background-color: #dbeafe;
+      color: #1b3058;
+      cursor: pointer;
+    }
+
+    .cal-day-cell.available:hover {
+      background-color: #bfdbfe;
+    }
+
+    .cal-day-cell.selected {
+      border: 2.5px solid #1b3058;
+      font-weight: 800;
+    }
+
+    .cal-day-cell.empty {
+      background: transparent;
+    }
+
+    .cal-footer {
+      text-align: center;
+      margin-top: 25px;
+    }
+
+    .btn-close-cal {
+      background: #ffffff;
+      border: 2px solid #1b3058;
+      color: #1b3058;
+      border-radius: 25px;
+      padding: 10px 32px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-close-cal:hover {
+      background: #1b3058;
+      color: #ffffff;
+    }
+  </style>
 </head>
 
 <body>
@@ -18,19 +140,43 @@
 
 <main class="container">
 
-  <!-- Input Tanggal Tersembunyi untuk Kalender -->
-  <input type="date" id="datePicker" style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;" onchange="onDateSelected(this.value)">
-
   <!-- Indikator Loading -->
   <div id="loader" class="loading">
     ⏳ Memuat data...
   </div>
 
+  <!-- Tampilan Kalender (Awal / Modal View) -->
+  <section id="calendarSection" class="hidden">
+    <div class="calendar-card">
+      <div class="cal-header">
+        <button class="btn-cal-nav" onclick="changeCalMonth(-1)">◀</button>
+        <h2 id="calMonthYearTitle">September 2026</h2>
+        <button class="btn-cal-nav" onclick="changeCalMonth(1)">▶</button>
+      </div>
+
+      <div class="cal-grid-header">
+        <div>MIN</div>
+        <div>SEN</div>
+        <div>SEL</div>
+        <div>RAB</div>
+        <div>KAM</div>
+        <div>JUM</div>
+        <div>SAB</div>
+      </div>
+
+      <div id="calGridDays" class="cal-grid-days"></div>
+
+      <div class="cal-footer">
+        <button class="btn-close-cal" onclick="closeCalendar()">Tutup Kalender</button>
+      </div>
+    </div>
+  </section>
+
   <!-- Konten Renungan Utama -->
   <section id="renungan" class="hidden">
 
     <header>
-      <div class="date-navigation" style="position: relative;">
+      <div class="date-navigation">
         <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
         <time class="displayDateText" onclick="openCalendar()" style="cursor: pointer;" title="Klik untuk pilih tanggal"></time>
         <button class="btn-nav-day" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
@@ -83,7 +229,7 @@
 
   <!-- Tampilan Jika Data Kosong -->
   <section id="emptyState" class="hidden">
-    <div class="date-navigation" style="justify-content: center; margin-bottom: 15px; position: relative;">
+    <div class="date-navigation" style="justify-content: center; margin-bottom: 15px;">
       <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
       <time class="displayDateText" onclick="openCalendar()" style="cursor: pointer; font-weight: bold; margin: 0 10px;" title="Klik untuk pilih tanggal"></time>
       <button class="btn-nav-day" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
@@ -92,7 +238,7 @@
 
     <div style="text-align: center; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
       <h3 style="margin-top:0; color:#333;">Belum ada renungan untuk tanggal ini.</h3>
-      <p style="color: #666; font-size: 14px; margin-bottom: 0;">Gunakan tombol panah ◀ / ▶ atau ikon 📅 di atas untuk memilih tanggal.</p>
+      <p style="color: #666; font-size: 14px; margin-bottom: 0;">Gunakan tombol panah ◀ / ▶ atau buka kalender untuk memilih tanggal.</p>
     </div>
   </section>
 
@@ -107,6 +253,9 @@
 <script>
   let currentFontSize = 100;
   let currentActiveDateStr = "";
+  let availableDatesList = [];
+  let calViewYear = 2026;
+  let calViewMonth = 8; // September
 
   document.addEventListener('DOMContentLoaded', function() {
     if (typeof CONFIG !== 'undefined') {
@@ -125,20 +274,19 @@
     const dd = String(today.getDate()).padStart(2, '0');
     const todayStr = `${yyyy}-${mm}-${dd}`;
     
+    calViewYear = yyyy;
+    calViewMonth = today.getMonth();
+
     loadData(todayStr, true);
   });
 
-  // Helper pengolah tanggal yang aman dari "Invalid Date"
   function parseDate(dateStr) {
     if (!dateStr) return null;
-    
     let clean = String(dateStr).split('T')[0].split(' ')[0].trim();
     let parts = clean.split('-');
-    
     if (parts.length === 3 && parts[0].length === 4) {
       return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
     }
-    
     let d = new Date(dateStr);
     return !isNaN(d.getTime()) ? d : null;
   }
@@ -148,10 +296,12 @@
     const loader = document.getElementById('loader');
     const renunganSec = document.getElementById('renungan');
     const emptySec = document.getElementById('emptyState');
+    const calSec = document.getElementById('calendarSection');
 
     if (loader) loader.classList.remove('hidden');
     if (renunganSec) renunganSec.classList.add('hidden');
     if (emptySec) emptySec.classList.add('hidden');
+    if (calSec) calSec.classList.add('hidden');
 
     if (typeof CONFIG === 'undefined' || !CONFIG.API_URL) {
       console.error("API_URL belum diatur di config.js");
@@ -164,9 +314,11 @@
       .then(resData => {
         if (loader) loader.classList.add('hidden');
 
-        if (resData.status === 'success' && resData.data) {
-          if (renunganSec) renunganSec.classList.remove('hidden');
+        if (resData.availableDates) {
+          availableDatesList = resData.availableDates;
+        }
 
+        if (resData.status === 'success' && resData.data) {
           if (resData.data.date) {
             currentActiveDateStr = resData.data.date;
           }
@@ -184,13 +336,12 @@
 
           updateDateText(currentActiveDateStr);
 
-          // Audio Player Control
+          // Audio
           const audioPlayer = document.getElementById('audioPlayer');
           const audioSource = document.getElementById('audioSource');
           const audioControl = document.getElementById('audioControl');
 
           if (audioControl) audioControl.innerText = "▶️ Putar Audio";
-          
           if (resData.data.audio && resData.data.audio.trim() !== '') {
             if (audioSource) audioSource.src = resData.data.audio;
             if (audioPlayer) {
@@ -203,24 +354,39 @@
             if (audioControl) audioControl.style.display = 'none';
           }
 
+          if (isInitialLoad) {
+            openCalendar();
+          } else {
+            if (renunganSec) renunganSec.classList.remove('hidden');
+          }
+
         } else {
           if (isInitialLoad && resData.availableDates && resData.availableDates.length > 0) {
             loadData(resData.availableDates[0], false);
             return;
           }
 
-          if (emptySec) emptySec.classList.remove('hidden');
           if (resData.academicYear) {
             document.getElementById('academicYear').innerText = resData.academicYear;
           }
           updateDateText(dateStr);
+
+          if (isInitialLoad) {
+            openCalendar();
+          } else {
+            if (emptySec) emptySec.classList.remove('hidden');
+          }
         }
       })
       .catch(err => {
         console.error("Gagal mengambil data:", err);
         if (loader) loader.classList.add('hidden');
-        if (emptySec) emptySec.classList.remove('hidden');
         updateDateText(dateStr);
+        if (isInitialLoad) {
+          openCalendar();
+        } else {
+          if (emptySec) emptySec.classList.remove('hidden');
+        }
       });
   }
 
@@ -256,30 +422,93 @@
     loadData(`${yyyy}-${mm}-${dd}`, false);
   }
 
-  // --- Fungsi Kalender ---
+  /* --- LOGIKA KALENDER --- */
   function openCalendar() {
-    const dateInput = document.getElementById('datePicker');
-    if (dateInput) {
-      if (currentActiveDateStr) {
-        const d = parseDate(currentActiveDateStr);
-        if (d) {
-          const yyyy = d.getFullYear();
-          const mm = String(d.getMonth() + 1).padStart(2, '0');
-          const dd = String(d.getDate()).padStart(2, '0');
-          dateInput.value = `${yyyy}-${mm}-${dd}`;
-        }
-      }
-      if (typeof dateInput.showPicker === 'function') {
-        dateInput.showPicker();
-      } else {
-        dateInput.click();
-      }
+    const renunganSec = document.getElementById('renungan');
+    const emptySec = document.getElementById('emptyState');
+    const calSec = document.getElementById('calendarSection');
+
+    if (renunganSec) renunganSec.classList.add('hidden');
+    if (emptySec) emptySec.classList.add('hidden');
+    if (calSec) calSec.classList.remove('hidden');
+
+    const activeObj = parseDate(currentActiveDateStr) || new Date();
+    calViewYear = activeObj.getFullYear();
+    calViewMonth = activeObj.getMonth();
+
+    renderCalendar();
+  }
+
+  function closeCalendar() {
+    const calSec = document.getElementById('calendarSection');
+    const renunganSec = document.getElementById('renungan');
+    const emptySec = document.getElementById('emptyState');
+
+    if (calSec) calSec.classList.add('hidden');
+
+    const displayJudul = document.getElementById('displayJudul')?.innerText;
+    if (displayJudul && displayJudul.trim() !== '') {
+      if (renunganSec) renunganSec.classList.remove('hidden');
+    } else {
+      if (emptySec) emptySec.classList.remove('hidden');
     }
   }
 
-  function onDateSelected(val) {
-    if (val) {
-      loadData(val, false);
+  function changeCalMonth(offset) {
+    calViewMonth += offset;
+    if (calViewMonth < 0) {
+      calViewMonth = 11;
+      calViewYear -= 1;
+    } else if (calViewMonth > 11) {
+      calViewMonth = 0;
+      calViewYear += 1;
+    }
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    const monthNames = [
+      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+
+    document.getElementById('calMonthYearTitle').innerText = `${monthNames[calViewMonth]} ${calViewYear}`;
+
+    const grid = document.getElementById('calGridDays');
+    grid.innerHTML = '';
+
+    const firstDayIndex = new Date(calViewYear, calViewMonth, 1).getDay();
+    const totalDays = new Date(calViewYear, calViewMonth + 1, 0).getDate();
+
+    for (let i = 0; i < firstDayIndex; i++) {
+      const emptyDiv = document.createElement('div');
+      emptyDiv.className = 'cal-day-cell empty';
+      grid.appendChild(emptyDiv);
+    }
+
+    for (let d = 1; d <= totalDays; d++) {
+      const mmStr = String(calViewMonth + 1).padStart(2, '0');
+      const ddStr = String(d).padStart(2, '0');
+      const dateKey = `${calViewYear}-${mmStr}-${ddStr}`;
+
+      const cell = document.createElement('div');
+      cell.className = 'cal-day-cell';
+      cell.innerText = d;
+
+      const isAvailable = availableDatesList.includes(dateKey);
+      if (isAvailable) {
+        cell.classList.add('available');
+      }
+
+      if (dateKey === currentActiveDateStr) {
+        cell.classList.add('selected');
+      }
+
+      cell.onclick = function() {
+        loadData(dateKey, false);
+      };
+
+      grid.appendChild(cell);
     }
   }
 
