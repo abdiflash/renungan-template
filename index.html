@@ -254,7 +254,10 @@
   let currentActiveDateStr = "";
   let availableDatesList = JSON.parse(localStorage.getItem('renungan_dates') || '[]');
   let calViewYear = 2026;
-  let calViewMonth = 8; // September
+  let calViewMonth = 8;
+  
+  // Guard untuk mencegah bentrokan request saat diklik cepat
+  let currentRequestId = 0;
 
   document.addEventListener('DOMContentLoaded', function() {
     if (typeof CONFIG !== 'undefined') {
@@ -273,25 +276,29 @@
     const dd = String(today.getDate()).padStart(2, '0');
     const todayStr = `${yyyy}-${mm}-${dd}`;
     
-    calViewYear = yyyy;
+    calViewYear = today.getFullYear();
     calViewMonth = today.getMonth();
 
-    // Tampilkan kalender secara instan
     renderCalendar();
-
-    // Fetch data di background
     loadData(todayStr, true);
   });
 
+  // Mencegah pergeseran hari akibat perbedaan zona waktu UTC/WIB
   function parseDate(dateStr) {
-    if (!dateStr) return null;
+    if (!dateStr) return new Date();
     let clean = String(dateStr).split('T')[0].split(' ')[0].trim();
     let parts = clean.split('-');
     if (parts.length === 3 && parts[0].length === 4) {
-      return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+      return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10), 12, 0, 0);
     }
-    let d = new Date(dateStr);
-    return !isNaN(d.getTime()) ? d : null;
+    return new Date();
+  }
+
+  function formatDateToString(d) {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
   }
 
   function renderDataToUI(data) {
@@ -305,8 +312,6 @@
     if (data.academicYear) {
       document.getElementById('academicYear').innerText = data.academicYear;
     }
-
-    updateDateText(data.date || currentActiveDateStr);
 
     // Audio
     const audioPlayer = document.getElementById('audioPlayer');
@@ -328,13 +333,19 @@
   }
 
   function loadData(dateStr, isInitialLoad = false) {
+    // Kunci langsung tanggal aktif & perbarui UI teks tanggal seketika
     currentActiveDateStr = dateStr;
+    updateDateText(dateStr);
+
+    // ID unik setiap request
+    const requestId = ++currentRequestId;
+
     const loader = document.getElementById('loader');
     const renunganSec = document.getElementById('renungan');
     const emptySec = document.getElementById('emptyState');
     const calSec = document.getElementById('calendarSection');
 
-    // 1. CEK CACHE LOCALSTORAGE (Respon Instan 0 Detik)
+    // 1. Cek LocalStorage Cache (Respon Instan)
     const cachedData = localStorage.getItem(`renungan_${dateStr}`);
     if (cachedData && !isInitialLoad) {
       try {
@@ -346,7 +357,7 @@
           renderDataToUI(parsed.data);
         }
       } catch (e) {
-        console.error("Error reading cache", e);
+        console.error("Cache error", e);
       }
     } else if (!isInitialLoad) {
       if (loader) loader.classList.remove('hidden');
@@ -354,10 +365,13 @@
 
     if (typeof CONFIG === 'undefined' || !CONFIG.API_URL) return;
 
-    // 2. FETCH DATA BARU DARI SERVER
+    // 2. Fetch Data Server
     fetch(`${CONFIG.API_URL}?date=${dateStr}`)
       .then(res => res.json())
       .then(resData => {
+        // Abaikan jika user sudah mengeklik tanggal lain yang lebih baru
+        if (requestId !== currentRequestId) return;
+
         if (loader) loader.classList.add('hidden');
 
         if (resData.availableDates) {
@@ -367,12 +381,7 @@
         }
 
         if (resData.status === 'success' && resData.data) {
-          // Simpan ke cache
           localStorage.setItem(`renungan_${dateStr}`, JSON.stringify(resData));
-
-          if (resData.data.date) {
-            currentActiveDateStr = resData.data.date;
-          }
 
           renderDataToUI(resData.data);
 
@@ -388,10 +397,10 @@
             if (renunganSec) renunganSec.classList.add('hidden');
             if (emptySec) emptySec.classList.remove('hidden');
           }
-          updateDateText(dateStr);
         }
       })
       .catch(err => {
+        if (requestId !== currentRequestId) return;
         console.error("Gagal mengambil data:", err);
         if (loader) loader.classList.add('hidden');
       });
@@ -415,18 +424,11 @@
   }
 
   function navigateDay(offset) {
-    if (!currentActiveDateStr) return;
-
     let baseDate = parseDate(currentActiveDateStr);
-    if (!baseDate) baseDate = new Date();
-
     baseDate.setDate(baseDate.getDate() + offset);
 
-    const yyyy = baseDate.getFullYear();
-    const mm = String(baseDate.getMonth() + 1).padStart(2, '0');
-    const dd = String(baseDate.getDate()).padStart(2, '0');
-
-    loadData(`${yyyy}-${mm}-${dd}`, false);
+    const targetDateStr = formatDateToString(baseDate);
+    loadData(targetDateStr, false);
   }
 
   /* --- LOGIKA KALENDER --- */
@@ -439,7 +441,7 @@
     if (emptySec) emptySec.classList.add('hidden');
     if (calSec) calSec.classList.remove('hidden');
 
-    const activeObj = parseDate(currentActiveDateStr) || new Date();
+    const activeObj = parseDate(currentActiveDateStr);
     calViewYear = activeObj.getFullYear();
     calViewMonth = activeObj.getMonth();
 
