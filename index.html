@@ -97,6 +97,12 @@
       background-color: #bfdbfe;
     }
 
+    .cal-day-cell.disabled-future {
+      opacity: 0.35;
+      cursor: not-allowed !important;
+      background-color: #f5f5f5;
+    }
+
     .cal-day-cell.selected {
       border: 2.5px solid #1b3058;
       font-weight: 800;
@@ -127,6 +133,11 @@
       background: #1b3058;
       color: #ffffff;
     }
+
+    .btn-nav-day:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 
@@ -144,7 +155,7 @@
     ⏳ Memuat data terbaru...
   </div>
 
-  <!-- Tampilan Kalender (Langsung Muncul di Awal) -->
+  <!-- Tampilan Kalender -->
   <section id="calendarSection">
     <div class="calendar-card">
       <div class="cal-header">
@@ -178,7 +189,7 @@
       <div class="date-navigation">
         <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
         <time class="displayDateText" onclick="openCalendar()" style="cursor: pointer;" title="Klik untuk pilih tanggal"></time>
-        <button class="btn-nav-day" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
+        <button class="btn-nav-day btn-nav-next" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
         <button class="btn-nav-day" onclick="openCalendar()" title="Buka Kalender">📅</button>
       </div>
 
@@ -231,7 +242,7 @@
     <div class="date-navigation" style="justify-content: center; margin-bottom: 15px;">
       <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
       <time class="displayDateText" onclick="openCalendar()" style="cursor: pointer; font-weight: bold; margin: 0 10px;" title="Klik untuk pilih tanggal"></time>
-      <button class="btn-nav-day" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
+      <button class="btn-nav-day btn-nav-next" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
       <button class="btn-nav-day" onclick="openCalendar()" title="Buka Kalender">📅</button>
     </div>
 
@@ -255,9 +266,16 @@
   let availableDatesList = JSON.parse(localStorage.getItem('renungan_dates') || '[]');
   let calViewYear = 2026;
   let calViewMonth = 8;
-  
-  // Guard untuk mencegah bentrokan request saat diklik cepat
   let currentRequestId = 0;
+
+  // Dapatkan String Tanggal Hari Ini (Format: YYYY-MM-DD)
+  function getTodayStr() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
 
   document.addEventListener('DOMContentLoaded', function() {
     if (typeof CONFIG !== 'undefined') {
@@ -270,20 +288,15 @@
       }
     }
 
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${yyyy}-${mm}-${dd}`;
-    
-    calViewYear = today.getFullYear();
-    calViewMonth = today.getMonth();
+    const todayStr = getTodayStr();
+    const todayObj = new Date();
+    calViewYear = todayObj.getFullYear();
+    calViewMonth = todayObj.getMonth();
 
     renderCalendar();
     loadData(todayStr, true);
   });
 
-  // Mencegah pergeseran hari akibat perbedaan zona waktu UTC/WIB
   function parseDate(dateStr) {
     if (!dateStr) return new Date();
     let clean = String(dateStr).split('T')[0].split(' ')[0].trim();
@@ -313,7 +326,6 @@
       document.getElementById('academicYear').innerText = data.academicYear;
     }
 
-    // Audio
     const audioPlayer = document.getElementById('audioPlayer');
     const audioSource = document.getElementById('audioSource');
     const audioControl = document.getElementById('audioControl');
@@ -332,12 +344,28 @@
     }
   }
 
+  function updateNextButtonState() {
+    const todayStr = getTodayStr();
+    const isTodayOrFuture = currentActiveDateStr >= todayStr;
+    const nextBtns = document.querySelectorAll('.btn-nav-next');
+    
+    nextBtns.forEach(btn => {
+      btn.disabled = isTodayOrFuture;
+    });
+  }
+
   function loadData(dateStr, isInitialLoad = false) {
-    // Kunci langsung tanggal aktif & perbarui UI teks tanggal seketika
+    const todayStr = getTodayStr();
+
+    // VALIDASI: Cegah akses jika tanggal lebih dari hari ini
+    if (dateStr > todayStr) {
+      return;
+    }
+
     currentActiveDateStr = dateStr;
     updateDateText(dateStr);
+    updateNextButtonState();
 
-    // ID unik setiap request
     const requestId = ++currentRequestId;
 
     const loader = document.getElementById('loader');
@@ -345,7 +373,7 @@
     const emptySec = document.getElementById('emptyState');
     const calSec = document.getElementById('calendarSection');
 
-    // 1. Cek LocalStorage Cache (Respon Instan)
+    // 1. Cek LocalStorage Cache
     const cachedData = localStorage.getItem(`renungan_${dateStr}`);
     if (cachedData && !isInitialLoad) {
       try {
@@ -369,9 +397,7 @@
     fetch(`${CONFIG.API_URL}?date=${dateStr}`)
       .then(res => res.json())
       .then(resData => {
-        // Abaikan jika user sudah mengeklik tanggal lain yang lebih baru
         if (requestId !== currentRequestId) return;
-
         if (loader) loader.classList.add('hidden');
 
         if (resData.availableDates) {
@@ -382,7 +408,6 @@
 
         if (resData.status === 'success' && resData.data) {
           localStorage.setItem(`renungan_${dateStr}`, JSON.stringify(resData));
-
           renderDataToUI(resData.data);
 
           if (!isInitialLoad) {
@@ -428,6 +453,11 @@
     baseDate.setDate(baseDate.getDate() + offset);
 
     const targetDateStr = formatDateToString(baseDate);
+    const todayStr = getTodayStr();
+
+    // VALIDASI: Jangan navigasi jika target melebihi hari ini
+    if (targetDateStr > todayStr) return;
+
     loadData(targetDateStr, false);
   }
 
@@ -488,6 +518,7 @@
 
     const firstDayIndex = new Date(calViewYear, calViewMonth, 1).getDay();
     const totalDays = new Date(calViewYear, calViewMonth + 1, 0).getDate();
+    const todayStr = getTodayStr();
 
     for (let i = 0; i < firstDayIndex; i++) {
       const emptyDiv = document.createElement('div');
@@ -505,17 +536,21 @@
       cell.innerText = d;
 
       const isAvailable = availableDatesList.includes(dateKey);
-      if (isAvailable) {
+      const isFuture = dateKey > todayStr;
+
+      // VALIDASI KALENDER: Hanya tanggal <= hari ini dan tersedia yang bisa diklik
+      if (isAvailable && !isFuture) {
         cell.classList.add('available');
+        cell.onclick = function() {
+          loadData(dateKey, false);
+        };
+      } else if (isFuture) {
+        cell.classList.add('disabled-future');
       }
 
       if (dateKey === currentActiveDateStr) {
         cell.classList.add('selected');
       }
-
-      cell.onclick = function() {
-        loadData(dateKey, false);
-      };
 
       grid.appendChild(cell);
     }
