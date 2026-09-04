@@ -87,20 +87,23 @@
       box-sizing: border-box;
     }
 
+    /* Hari ini & Hari sebelumnya yang ada renungan */
     .cal-day-cell.available {
-      background-color: #dbeafe;
-      color: #1b3058;
-      cursor: pointer;
+      background-color: #dbeafe !important;
+      color: #1b3058 !important;
+      cursor: pointer !important;
     }
 
     .cal-day-cell.available:hover {
-      background-color: #bfdbfe;
+      background-color: #bfdbfe !important;
     }
 
+    /* Tanggal Masa Depan (Dikunci & Abu-abu) */
     .cal-day-cell.disabled-future {
-      opacity: 0.35;
+      background-color: #f2f2f2 !important;
+      color: #c0c0c0 !important;
       cursor: not-allowed !important;
-      background-color: #f5f5f5;
+      opacity: 0.55;
     }
 
     .cal-day-cell.selected {
@@ -268,7 +271,6 @@
   let calViewMonth = 8;
   let currentRequestId = 0;
 
-  // Dapatkan String Tanggal Hari Ini (Format: YYYY-MM-DD)
   function getTodayStr() {
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -357,7 +359,7 @@
   function loadData(dateStr, isInitialLoad = false) {
     const todayStr = getTodayStr();
 
-    // VALIDASI: Cegah akses jika tanggal lebih dari hari ini
+    // Blokir jika mencoba memuat tanggal di masa depan
     if (dateStr > todayStr) {
       return;
     }
@@ -455,7 +457,6 @@
     const targetDateStr = formatDateToString(baseDate);
     const todayStr = getTodayStr();
 
-    // VALIDASI: Jangan navigasi jika target melebihi hari ini
     if (targetDateStr > todayStr) return;
 
     loadData(targetDateStr, false);
@@ -535,17 +536,18 @@
       cell.className = 'cal-day-cell';
       cell.innerText = d;
 
-      const isAvailable = availableDatesList.includes(dateKey);
       const isFuture = dateKey > todayStr;
+      const isAvailable = availableDatesList.includes(dateKey);
 
-      // VALIDASI KALENDER: Hanya tanggal <= hari ini dan tersedia yang bisa diklik
-      if (isAvailable && !isFuture) {
+      if (isFuture) {
+        // TANGGAL MASA DEPAN: DIKUNCI & ABU-ABU
+        cell.classList.add('disabled-future');
+      } else if (isAvailable) {
+        // TANGGAL HARI INI / LAMPAU YANG ADA DATA: BIRU & BISA DIKLIK
         cell.classList.add('available');
         cell.onclick = function() {
           loadData(dateKey, false);
         };
-      } else if (isFuture) {
-        cell.classList.add('disabled-future');
       }
 
       if (dateKey === currentActiveDateStr) {
