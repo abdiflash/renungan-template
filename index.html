@@ -378,6 +378,29 @@
     });
   }
 
+  /* FITUR PREFETCHING: Mengunduh data H-1 s.d. H-3 secara diam-diam */
+  function prefetchAdjacentDates(baseDateStr) {
+    if (typeof CONFIG === 'undefined' || !CONFIG.API_URL) return;
+
+    for (let i = 1; i <= 3; i++) {
+      let d = parseDate(baseDateStr);
+      d.setDate(d.getDate() - i);
+      const targetStr = formatDateToString(d);
+
+      // Jika belum ada di cache, unduh di background
+      if (!localStorage.getItem(`renungan_${targetStr}`)) {
+        fetch(`${CONFIG.API_URL}?date=${targetStr}`)
+          .then(res => res.json())
+          .then(resData => {
+            if (resData.status === 'success' && resData.data) {
+              localStorage.setItem(`renungan_${targetStr}`, JSON.stringify(resData));
+            }
+          })
+          .catch(() => {});
+      }
+    }
+  }
+
   function loadData(dateStr, isInitialLoad = false) {
     const todayStr = getTodayStr();
     if (dateStr > todayStr) return;
@@ -393,33 +416,39 @@
     const calSec = document.getElementById('calendarSection');
     const fadeWrapper = document.getElementById('contentFadeWrapper');
 
-    // 1. Cek LocalStorage Cache
     const cachedData = localStorage.getItem(`renungan_${dateStr}`);
-    if (cachedData && !isInitialLoad) {
+
+    // 1. Jika data sudah ada di local storage (Instant Render)
+    if (cachedData) {
       try {
         const parsed = JSON.parse(cachedData);
         if (parsed && parsed.status === 'success' && parsed.data) {
+          if (loader) loader.classList.add('hidden');
           if (calSec) calSec.classList.add('hidden');
           if (emptySec) emptySec.classList.add('hidden');
           if (renunganSec) renunganSec.classList.remove('hidden');
-          renderDataToUI(parsed.data);
           
-          // Hilangkan efek opacity setelah UI terisi
+          renderDataToUI(parsed.data);
+
           setTimeout(() => {
             if (fadeWrapper) fadeWrapper.classList.remove('is-fading');
             isTransitioning = false;
           }, 50);
+
+          // Jalankan prefetch untuk hari-hari sebelumnya
+          prefetchAdjacentDates(dateStr);
+          return;
         }
       } catch (e) {
         console.error("Cache error", e);
       }
-    } else if (!isInitialLoad) {
-      if (loader) loader.classList.remove('hidden');
     }
+
+    // 2. Jika belum ada di cache, munculkan loader dan fetch dari server
+    if (!isInitialLoad && loader) loader.classList.remove('hidden');
 
     if (typeof CONFIG === 'undefined' || !CONFIG.API_URL) return;
 
-    // 2. Fetch Data Server
     fetch(`${CONFIG.API_URL}?date=${dateStr}`)
       .then(res => res.json())
       .then(resData => {
@@ -441,6 +470,9 @@
             if (emptySec) emptySec.classList.add('hidden');
             if (renunganSec) renunganSec.classList.remove('hidden');
           }
+
+          // Trigger prefetch tanggal terdekat setelah data berhasil diunduh
+          prefetchAdjacentDates(dateStr);
 
         } else {
           if (!isInitialLoad) {
@@ -482,7 +514,7 @@
   }
 
   function navigateDay(offset) {
-    if (isTransitioning) return; // Kunci tombol saat transisi sedang berjalan
+    if (isTransitioning) return;
 
     let baseDate = parseDate(currentActiveDateStr);
     baseDate.setDate(baseDate.getDate() + offset);
@@ -495,11 +527,9 @@
     isTransitioning = true;
     const fadeWrapper = document.getElementById('contentFadeWrapper');
     
-    // Mulai animasi Fade Out & Scroll ke Atas
     if (fadeWrapper) fadeWrapper.classList.add('is-fading');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Beri jeda 180ms agar fade-out terasa halus sebelum mengganti data
     setTimeout(() => {
       loadData(targetDateStr, false);
     }, 180);
