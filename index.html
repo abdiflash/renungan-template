@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    /* Styling Kalender Khusus - Nuansa Biru Navy */
     .app-header {
       background-color: #1b3058 !important;
     }
@@ -140,13 +139,13 @@
 
 <main class="container">
 
-  <!-- Indikator Loading -->
-  <div id="loader" class="loading">
-    ⏳ Memuat data...
+  <!-- Indikator Loading Mini (Top Banner) -->
+  <div id="loader" class="loading hidden" style="padding: 10px; font-size: 14px;">
+    ⏳ Memuat data terbaru...
   </div>
 
-  <!-- Tampilan Kalender (Awal / Modal View) -->
-  <section id="calendarSection" class="hidden">
+  <!-- Tampilan Kalender (Langsung Muncul di Awal) -->
+  <section id="calendarSection">
     <div class="calendar-card">
       <div class="cal-header">
         <button class="btn-cal-nav" onclick="changeCalMonth(-1)">◀</button>
@@ -253,7 +252,7 @@
 <script>
   let currentFontSize = 100;
   let currentActiveDateStr = "";
-  let availableDatesList = [];
+  let availableDatesList = JSON.parse(localStorage.getItem('renungan_dates') || '[]');
   let calViewYear = 2026;
   let calViewMonth = 8; // September
 
@@ -277,6 +276,10 @@
     calViewYear = yyyy;
     calViewMonth = today.getMonth();
 
+    // Tampilkan kalender secara instan
+    renderCalendar();
+
+    // Fetch data di background
     loadData(todayStr, true);
   });
 
@@ -291,6 +294,39 @@
     return !isNaN(d.getTime()) ? d : null;
   }
 
+  function renderDataToUI(data) {
+    document.getElementById('displayJudul').innerText = data.judul || '';
+    document.getElementById('displayAyat').innerText = data.ayatRef || '';
+    document.getElementById('displayAyatText').innerText = data.ayatText || '';
+    document.getElementById('displayIsi').innerHTML = data.isi || '';
+    document.getElementById('displayRefleksi').innerText = data.refleksi || '';
+    document.getElementById('count').innerText = data.views || 0;
+
+    if (data.academicYear) {
+      document.getElementById('academicYear').innerText = data.academicYear;
+    }
+
+    updateDateText(data.date || currentActiveDateStr);
+
+    // Audio
+    const audioPlayer = document.getElementById('audioPlayer');
+    const audioSource = document.getElementById('audioSource');
+    const audioControl = document.getElementById('audioControl');
+
+    if (audioControl) audioControl.innerText = "▶️ Putar Audio";
+    if (data.audio && data.audio.trim() !== '') {
+      if (audioSource) audioSource.src = data.audio;
+      if (audioPlayer) {
+        audioPlayer.load();
+        audioPlayer.style.display = 'block';
+      }
+      if (audioControl) audioControl.style.display = 'inline-block';
+    } else {
+      if (audioPlayer) audioPlayer.style.display = 'none';
+      if (audioControl) audioControl.style.display = 'none';
+    }
+  }
+
   function loadData(dateStr, isInitialLoad = false) {
     currentActiveDateStr = dateStr;
     const loader = document.getElementById('loader');
@@ -298,17 +334,27 @@
     const emptySec = document.getElementById('emptyState');
     const calSec = document.getElementById('calendarSection');
 
-    if (loader) loader.classList.remove('hidden');
-    if (renunganSec) renunganSec.classList.add('hidden');
-    if (emptySec) emptySec.classList.add('hidden');
-    if (calSec) calSec.classList.add('hidden');
-
-    if (typeof CONFIG === 'undefined' || !CONFIG.API_URL) {
-      console.error("API_URL belum diatur di config.js");
-      if (loader) loader.classList.add('hidden');
-      return;
+    // 1. CEK CACHE LOCALSTORAGE (Respon Instan 0 Detik)
+    const cachedData = localStorage.getItem(`renungan_${dateStr}`);
+    if (cachedData && !isInitialLoad) {
+      try {
+        const parsed = JSON.parse(cachedData);
+        if (parsed && parsed.status === 'success' && parsed.data) {
+          if (calSec) calSec.classList.add('hidden');
+          if (emptySec) emptySec.classList.add('hidden');
+          if (renunganSec) renunganSec.classList.remove('hidden');
+          renderDataToUI(parsed.data);
+        }
+      } catch (e) {
+        console.error("Error reading cache", e);
+      }
+    } else if (!isInitialLoad) {
+      if (loader) loader.classList.remove('hidden');
     }
 
+    if (typeof CONFIG === 'undefined' || !CONFIG.API_URL) return;
+
+    // 2. FETCH DATA BARU DARI SERVER
     fetch(`${CONFIG.API_URL}?date=${dateStr}`)
       .then(res => res.json())
       .then(resData => {
@@ -316,77 +362,38 @@
 
         if (resData.availableDates) {
           availableDatesList = resData.availableDates;
+          localStorage.setItem('renungan_dates', JSON.stringify(availableDatesList));
+          renderCalendar();
         }
 
         if (resData.status === 'success' && resData.data) {
+          // Simpan ke cache
+          localStorage.setItem(`renungan_${dateStr}`, JSON.stringify(resData));
+
           if (resData.data.date) {
             currentActiveDateStr = resData.data.date;
           }
 
-          document.getElementById('displayJudul').innerText = resData.data.judul || '';
-          document.getElementById('displayAyat').innerText = resData.data.ayatRef || '';
-          document.getElementById('displayAyatText').innerText = resData.data.ayatText || '';
-          document.getElementById('displayIsi').innerHTML = resData.data.isi || '';
-          document.getElementById('displayRefleksi').innerText = resData.data.refleksi || '';
-          document.getElementById('count').innerText = resData.data.views || 0;
+          renderDataToUI(resData.data);
 
-          if (resData.data.academicYear) {
-            document.getElementById('academicYear').innerText = resData.data.academicYear;
-          }
-
-          updateDateText(currentActiveDateStr);
-
-          // Audio
-          const audioPlayer = document.getElementById('audioPlayer');
-          const audioSource = document.getElementById('audioSource');
-          const audioControl = document.getElementById('audioControl');
-
-          if (audioControl) audioControl.innerText = "▶️ Putar Audio";
-          if (resData.data.audio && resData.data.audio.trim() !== '') {
-            if (audioSource) audioSource.src = resData.data.audio;
-            if (audioPlayer) {
-              audioPlayer.load();
-              audioPlayer.style.display = 'block';
-            }
-            if (audioControl) audioControl.style.display = 'inline-block';
-          } else {
-            if (audioPlayer) audioPlayer.style.display = 'none';
-            if (audioControl) audioControl.style.display = 'none';
-          }
-
-          if (isInitialLoad) {
-            openCalendar();
-          } else {
+          if (!isInitialLoad) {
+            if (calSec) calSec.classList.add('hidden');
+            if (emptySec) emptySec.classList.add('hidden');
             if (renunganSec) renunganSec.classList.remove('hidden');
           }
 
         } else {
-          if (isInitialLoad && resData.availableDates && resData.availableDates.length > 0) {
-            loadData(resData.availableDates[0], false);
-            return;
-          }
-
-          if (resData.academicYear) {
-            document.getElementById('academicYear').innerText = resData.academicYear;
-          }
-          updateDateText(dateStr);
-
-          if (isInitialLoad) {
-            openCalendar();
-          } else {
+          if (!isInitialLoad) {
+            if (calSec) calSec.classList.add('hidden');
+            if (renunganSec) renunganSec.classList.add('hidden');
             if (emptySec) emptySec.classList.remove('hidden');
           }
+          updateDateText(dateStr);
         }
       })
       .catch(err => {
         console.error("Gagal mengambil data:", err);
         if (loader) loader.classList.add('hidden');
-        updateDateText(dateStr);
-        if (isInitialLoad) {
-          openCalendar();
-        } else {
-          if (emptySec) emptySec.classList.remove('hidden');
-        }
       });
   }
 
