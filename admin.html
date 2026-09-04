@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Input Renungan Harian</title>
+
+  <!-- Quill Rich Text Editor CSS -->
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      background-color: #f4f6f9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .admin-card {
+      background: #ffffff;
+      max-width: 800px;
+      margin: 0 auto;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .admin-header {
+      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-header h2 {
+      margin: 0;
+      color: #1b3058;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #333333;
+      font-size: 0.95rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 1.5px solid #cccccc;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #1b3058;
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Container Quill Editor */
+    #editor-container {
+      height: 250px;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      background: #ffffff;
+    }
+
+    .ql-toolbar {
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .date-row {
+      display: flex;
+      gap: 15px;
+      align-items: flex-end;
+    }
+
+    .btn-submit {
+      background-color: #1b3058;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.2s;
+    }
+
+    .btn-submit:hover {
+      background-color: #12213e;
+    }
+
+    .btn-submit:disabled {
+      background-color: #a0a0a0;
+      cursor: not-allowed;
+    }
+
+    .btn-check {
+      background: #e2e8f0;
+      color: #1b3058;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-check:hover {
+      background: #cbd5e1;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+      font-size: 0.95rem;
+    }
+
+    .alert-success {
+      background-color: #d1e7dd;
+      color: #0f5132;
+    }
+
+    .alert-error {
+      background-color: #f8d7da;
+      color: #842029;
+    }
+
+    .alert-info {
+      background-color: #cff4fc;
+      color: #055160;
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-card">
+  <div class="admin-header">
+    <h2>✍️ Input Renungan Harian</h2>
+    <a href="index.html" style="text-decoration: none; color: #1b3058; font-weight: 600;">← Ke Halaman Utama</a>
+  </div>
+
+  <div id="statusAlert" class="alert"></div>
+
+  <form id="renunganForm">
+    
+    <!-- Tanggal & Tombol Cek -->
+    <div class="form-group">
+      <label for="inputDate">Tanggal Renungan</label>
+      <div class="date-row">
+        <input type="date" id="inputDate" class="form-control" required style="flex: 1;">
+        <button type="button" class="btn-check" onclick="checkExistingData()">🔍 Cek / Edit Data</button>
+      </div>
+    </div>
+
+    <!-- Judul -->
+    <div class="form-group">
+      <label for="inputJudul">Judul Renungan</label>
+      <input type="text" id="inputJudul" class="form-control" placeholder="Contoh: Hidup dalam Pengampunan" required>
+    </div>
+
+    <!-- Referensi Ayat -->
+    <div class="form-group">
+      <label for="inputAyatRef">Referensi Ayat</label>
+      <input type="text" id="inputAyatRef" class="form-control" placeholder="Contoh: Yohanes 3:16" required>
+    </div>
+
+    <!-- Teks Ayat -->
+    <div class="form-group">
+      <label for="inputAyatText">Isi Teks Ayat (Kutipan Kitab Suci)</label>
+      <textarea id="inputAyatText" class="form-control" placeholder="Tuliskan isi ayat di sini..."></textarea>
+    </div>
+
+    <!-- Isi Renungan (Rich Text Editor) -->
+    <div class="form-group">
+      <label>Isi Renungan (Gunakan Format Bold, Italic, List, dll.)</label>
+      <div id="editor-container"></div>
+    </div>
+
+    <!-- Refleksi -->
+    <div class="form-group">
+      <label for="inputRefleksi">Poin Refleksi / Pertanyaan Perenungan</label>
+      <textarea id="inputRefleksi" class="form-control" placeholder="Contoh: Apa langkah nyata yang bisa kamu lakukan hari ini?"></textarea>
+    </div>
+
+    <!-- URL Audio -->
+    <div class="form-group">
+      <label for="inputAudio">URL File Audio MP3 (Opsional)</label>
+      <input type="url" id="inputAudio" class="form-control" placeholder="https://example.com/audio/renungan.mp3">
+    </div>
+
+    <button type="submit" id="btnSubmit" class="btn-submit">💾 Simpan Renungan</button>
+  </form>
+</div>
+
+<!-- Quill JS Library -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<script src="config.js"></script>
+
+<script>
+  // Inisialisasi Quill Editor dengan Toolbar Lengkap
+  const quill = new Quill('#editor-container', {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'align': [] }],
+        ['clean']
+      ]
+    },
+    placeholder: 'Tuliskan bacaan renungan di sini...'
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Set default tanggal ke hari ini
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('inputDate').value = today;
+  });
+
+  function showAlert(message, type) {
+    const alert = document.getElementById('statusAlert');
+    alert.className = `alert alert-${type}`;
+    alert.innerText = message;
+    alert.style.display = 'block';
+    
+    if (type === 'success' || type === 'info') {
+      setTimeout(() => { alert.style.display = 'none'; }, 5000);
+    }
+  }
+
+  // Fungsi untuk mengecek apakah tanggal ini sudah ada datanya di Sheet
+  function checkExistingData() {
+    const dateVal = document.getElementById('inputDate').value;
+    if (!dateVal) {
+      alert("Pilih tanggal terlebih dahulu!");
+      return;
+    }
+
+    showAlert("⏳ Mengambil data renungan...", "info");
+
+    fetch(`${CONFIG.API_URL}?date=${dateVal}`)
+      .then(res => res.json())
+      .then(resData => {
+        if (resData.status === 'success' && resData.data) {
+          const data = resData.data;
+          document.getElementById('inputJudul').value = data.judul || '';
+          document.getElementById('inputAyatRef').value = data.ayatRef || '';
+          document.getElementById('inputAyatText').value = data.ayatText || '';
+          document.getElementById('inputRefleksi').value = data.refleksi || '';
+          document.getElementById('inputAudio').value = data.audio || '';
+          
+          // Set isi format HTML ke Quill Editor
+          quill.root.innerHTML = data.isi || '';
+
+          showAlert(`Data untuk tanggal ${dateVal} ditemukan! Kamu bisa mengeditnya di bawah.`, "success");
+        } else {
+          showAlert(`Belum ada data untuk tanggal ${dateVal}. Silakan isi formulir baru.`, "info");
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        showAlert("Gagal mengambil data dari server.", "error");
+      });
+  }
+
+  // Simpan Data ke Google Sheets
+  document.getElementById('renunganForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById('btnSubmit');
+    btn.disabled = true;
+    btn.innerText = "⏳ Menyimpan...";
+
+    showAlert("Sedang menyimpan data ke server...", "info");
+
+    const payload = {
+      date: document.getElementById('inputDate').value,
+      judul: document.getElementById('inputJudul').value,
+      ayatRef: document.getElementById('inputAyatRef').value,
+      ayatText: document.getElementById('inputAyatText').value,
+      isi: quill.root.innerHTML, // Mengambil format Rich Text (HTML)
+      refleksi: document.getElementById('inputRefleksi').value,
+      audio: document.getElementById('inputAudio').value
+    };
+
+    // Mengirim POST Data ke Google Apps Script
+    fetch(CONFIG.API_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(resData => {
+      btn.disabled = false;
+      btn.innerText = "💾 Simpan Renungan";
+
+      if (resData.status === 'success') {
+        showAlert("✅ Renungan berhasil disimpan!", "success");
+        // Hapus cache lokal agar frontend utama langsung membaca data terbaru
+        localStorage.removeItem(`renungan_${payload.date}`);
+      } else {
+        showAlert("❌ Gagal menyimpan: " + (resData.message || "Terjadi kesalahan"), "error");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      btn.disabled = false;
+      btn.innerText = "💾 Simpan Renungan";
+      showAlert("❌ Terjadi kesalahan jaringan saat menyimpan data.", "error");
+    });
+  });
+</script>
+
+</body>
+</html>
