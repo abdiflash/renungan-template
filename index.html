@@ -18,6 +18,9 @@
 
 <main class="container">
 
+  <!-- Input Tanggal Tersembunyi untuk Kalender -->
+  <input type="date" id="datePicker" style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;" onchange="onDateSelected(this.value)">
+
   <!-- Indikator Loading -->
   <div id="loader" class="loading">
     ⏳ Memuat data...
@@ -27,10 +30,11 @@
   <section id="renungan" class="hidden">
 
     <header>
-      <div class="date-navigation">
+      <div class="date-navigation" style="position: relative;">
         <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
-        <time class="displayDateText"></time>
+        <time class="displayDateText" onclick="openCalendar()" style="cursor: pointer;" title="Klik untuk pilih tanggal"></time>
         <button class="btn-nav-day" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
+        <button class="btn-nav-day" onclick="openCalendar()" title="Buka Kalender">📅</button>
       </div>
 
       <div class="audio-container">
@@ -79,15 +83,16 @@
 
   <!-- Tampilan Jika Data Kosong -->
   <section id="emptyState" class="hidden">
-    <div class="date-navigation" style="justify-content: center; margin-bottom: 15px;">
+    <div class="date-navigation" style="justify-content: center; margin-bottom: 15px; position: relative;">
       <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
-      <time class="displayDateText" style="font-weight: bold; margin: 0 10px;"></time>
+      <time class="displayDateText" onclick="openCalendar()" style="cursor: pointer; font-weight: bold; margin: 0 10px;" title="Klik untuk pilih tanggal"></time>
       <button class="btn-nav-day" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
+      <button class="btn-nav-day" onclick="openCalendar()" title="Buka Kalender">📅</button>
     </div>
 
     <div style="text-align: center; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
       <h3 style="margin-top:0; color:#333;">Belum ada renungan untuk tanggal ini.</h3>
-      <p style="color: #666; font-size: 14px; margin-bottom: 0;">Gunakan tombol panah ◀ atau ▶ di atas untuk berpindah tanggal.</p>
+      <p style="color: #666; font-size: 14px; margin-bottom: 0;">Gunakan tombol panah ◀ / ▶ atau ikon 📅 di atas untuk memilih tanggal.</p>
     </div>
   </section>
 
@@ -249,6 +254,33 @@
     const dd = String(baseDate.getDate()).padStart(2, '0');
 
     loadData(`${yyyy}-${mm}-${dd}`, false);
+  }
+
+  // --- Fungsi Kalender ---
+  function openCalendar() {
+    const dateInput = document.getElementById('datePicker');
+    if (dateInput) {
+      if (currentActiveDateStr) {
+        const d = parseDate(currentActiveDateStr);
+        if (d) {
+          const yyyy = d.getFullYear();
+          const mm = String(d.getMonth() + 1).padStart(2, '0');
+          const dd = String(d.getDate()).padStart(2, '0');
+          dateInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+      }
+      if (typeof dateInput.showPicker === 'function') {
+        dateInput.showPicker();
+      } else {
+        dateInput.click();
+      }
+    }
+  }
+
+  function onDateSelected(val) {
+    if (val) {
+      loadData(val, false);
+    }
   }
 
   function changeFontSize(step) {
