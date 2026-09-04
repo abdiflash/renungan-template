@@ -87,7 +87,6 @@
       box-sizing: border-box;
     }
 
-    /* Hari ini & Hari sebelumnya yang ada renungan */
     .cal-day-cell.available {
       background-color: #dbeafe !important;
       color: #1b3058 !important;
@@ -98,7 +97,6 @@
       background-color: #bfdbfe !important;
     }
 
-    /* Tanggal Masa Depan (Dikunci & Abu-abu) */
     .cal-day-cell.disabled-future {
       background-color: #f2f2f2 !important;
       color: #c0c0c0 !important;
@@ -137,9 +135,27 @@
       color: #ffffff;
     }
 
+    .btn-nav-day {
+      transition: transform 0.15s ease, opacity 0.2s ease;
+    }
+
+    .btn-nav-day:active:not(:disabled) {
+      transform: scale(0.9);
+    }
+
     .btn-nav-day:disabled {
       opacity: 0.3;
       cursor: not-allowed;
+    }
+
+    /* Animasi Transisi Halus (Smooth Fade) */
+    .fade-wrapper {
+      transition: opacity 0.2s ease-in-out;
+      opacity: 1;
+    }
+
+    .fade-wrapper.is-fading {
+      opacity: 0;
     }
   </style>
 </head>
@@ -185,75 +201,80 @@
     </div>
   </section>
 
-  <!-- Konten Renungan Utama -->
-  <section id="renungan" class="hidden">
+  <!-- Wrapper Utama dengan Efek Smooth Fade -->
+  <div id="contentFadeWrapper" class="fade-wrapper">
+    
+    <!-- Konten Renungan Utama -->
+    <section id="renungan" class="hidden">
 
-    <header>
-      <div class="date-navigation">
+      <header>
+        <div class="date-navigation">
+          <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
+          <time class="displayDateText" onclick="openCalendar()" style="cursor: pointer;" title="Klik untuk pilih tanggal"></time>
+          <button class="btn-nav-day btn-nav-next" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
+          <button class="btn-nav-day" onclick="openCalendar()" title="Buka Kalender">📅</button>
+        </div>
+
+        <div class="audio-container">
+          <div class="action-area-top">
+            <div class="font-controls">
+              <button class="btn-font" onclick="changeFontSize(-1)" title="Kecilkan Teks">A-</button>
+              <button class="btn-font" onclick="changeFontSize(1)" title="Besarkan Teks">A+</button>
+            </div>
+
+            <button id="audioControl" class="btn-elegant" onclick="toggleAudio()" style="display:none;">▶️ Putar Audio</button>
+          </div>
+
+          <audio id="audioPlayer" controls class="audio-slider" style="display:none;">
+            <source id="audioSource" src="" type="audio/mpeg">
+          </audio>
+        </div>
+      </header>
+
+      <article id="articleContent">
+        <h3 id="displayJudul"></h3>
+
+        <div class="ayat-box">
+          <span id="displayAyat" class="ayat-ref"></span>
+          <blockquote id="displayAyatText" class="ayat-text"></blockquote>
+        </div>
+
+        <div id="displayIsi"></div>
+
+        <div class="refleksi-box">
+          <div class="refleksi-label">Refleksi</div>
+          <p id="displayRefleksi" class="refleksi-content"></p>
+        </div>
+      </article>
+
+      <div class="article-footer-actions">
+        <button class="btn-share-wa" onclick="shareToWhatsApp()">
+          📲 Bagikan ke WhatsApp
+        </button>
+        
+        <div class="reader-stats">
+          📖 Hari ini sudah dibaca oleh <span id="count">0</span> orang
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Tampilan Jika Data Kosong -->
+    <section id="emptyState" class="hidden">
+      <div class="date-navigation" style="justify-content: center; margin-bottom: 15px;">
         <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
-        <time class="displayDateText" onclick="openCalendar()" style="cursor: pointer;" title="Klik untuk pilih tanggal"></time>
+        <time class="displayDateText" onclick="openCalendar()" style="cursor: pointer; font-weight: bold; margin: 0 10px;" title="Klik untuk pilih tanggal"></time>
         <button class="btn-nav-day btn-nav-next" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
         <button class="btn-nav-day" onclick="openCalendar()" title="Buka Kalender">📅</button>
       </div>
 
-      <div class="audio-container">
-        <div class="action-area-top">
-          <div class="font-controls">
-            <button class="btn-font" onclick="changeFontSize(-1)" title="Kecilkan Teks">A-</button>
-            <button class="btn-font" onclick="changeFontSize(1)" title="Besarkan Teks">A+</button>
-          </div>
-
-          <button id="audioControl" class="btn-elegant" onclick="toggleAudio()" style="display:none;">▶️ Putar Audio</button>
-        </div>
-
-        <audio id="audioPlayer" controls class="audio-slider" style="display:none;">
-          <source id="audioSource" src="" type="audio/mpeg">
-        </audio>
+      <div style="text-align: center; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+        <h3 style="margin-top:0; color:#333;">Belum ada renungan untuk tanggal ini.</h3>
+        <p style="color: #666; font-size: 14px; margin-bottom: 0;">Gunakan tombol panah ◀ / ▶ atau buka kalender untuk memilih tanggal.</p>
       </div>
-    </header>
+    </section>
 
-    <article id="articleContent">
-      <h3 id="displayJudul"></h3>
-
-      <div class="ayat-box">
-        <span id="displayAyat" class="ayat-ref"></span>
-        <blockquote id="displayAyatText" class="ayat-text"></blockquote>
-      </div>
-
-      <div id="displayIsi"></div>
-
-      <div class="refleksi-box">
-        <div class="refleksi-label">Refleksi</div>
-        <p id="displayRefleksi" class="refleksi-content"></p>
-      </div>
-    </article>
-
-    <div class="article-footer-actions">
-      <button class="btn-share-wa" onclick="shareToWhatsApp()">
-        📲 Bagikan ke WhatsApp
-      </button>
-      
-      <div class="reader-stats">
-        📖 Hari ini sudah dibaca oleh <span id="count">0</span> orang
-      </div>
-    </div>
-
-  </section>
-
-  <!-- Tampilan Jika Data Kosong -->
-  <section id="emptyState" class="hidden">
-    <div class="date-navigation" style="justify-content: center; margin-bottom: 15px;">
-      <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
-      <time class="displayDateText" onclick="openCalendar()" style="cursor: pointer; font-weight: bold; margin: 0 10px;" title="Klik untuk pilih tanggal"></time>
-      <button class="btn-nav-day btn-nav-next" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
-      <button class="btn-nav-day" onclick="openCalendar()" title="Buka Kalender">📅</button>
-    </div>
-
-    <div style="text-align: center; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-      <h3 style="margin-top:0; color:#333;">Belum ada renungan untuk tanggal ini.</h3>
-      <p style="color: #666; font-size: 14px; margin-bottom: 0;">Gunakan tombol panah ◀ / ▶ atau buka kalender untuk memilih tanggal.</p>
-    </div>
-  </section>
+  </div>
 
 </main>
 
@@ -270,6 +291,7 @@
   let calViewYear = 2026;
   let calViewMonth = 8;
   let currentRequestId = 0;
+  let isTransitioning = false;
 
   function getTodayStr() {
     const today = new Date();
@@ -358,22 +380,18 @@
 
   function loadData(dateStr, isInitialLoad = false) {
     const todayStr = getTodayStr();
-
-    // Blokir jika mencoba memuat tanggal di masa depan
-    if (dateStr > todayStr) {
-      return;
-    }
+    if (dateStr > todayStr) return;
 
     currentActiveDateStr = dateStr;
     updateDateText(dateStr);
     updateNextButtonState();
 
     const requestId = ++currentRequestId;
-
     const loader = document.getElementById('loader');
     const renunganSec = document.getElementById('renungan');
     const emptySec = document.getElementById('emptyState');
     const calSec = document.getElementById('calendarSection');
+    const fadeWrapper = document.getElementById('contentFadeWrapper');
 
     // 1. Cek LocalStorage Cache
     const cachedData = localStorage.getItem(`renungan_${dateStr}`);
@@ -385,6 +403,12 @@
           if (emptySec) emptySec.classList.add('hidden');
           if (renunganSec) renunganSec.classList.remove('hidden');
           renderDataToUI(parsed.data);
+          
+          // Hilangkan efek opacity setelah UI terisi
+          setTimeout(() => {
+            if (fadeWrapper) fadeWrapper.classList.remove('is-fading');
+            isTransitioning = false;
+          }, 50);
         }
       } catch (e) {
         console.error("Cache error", e);
@@ -425,11 +449,18 @@
             if (emptySec) emptySec.classList.remove('hidden');
           }
         }
+
+        setTimeout(() => {
+          if (fadeWrapper) fadeWrapper.classList.remove('is-fading');
+          isTransitioning = false;
+        }, 50);
       })
       .catch(err => {
         if (requestId !== currentRequestId) return;
         console.error("Gagal mengambil data:", err);
         if (loader) loader.classList.add('hidden');
+        if (fadeWrapper) fadeWrapper.classList.remove('is-fading');
+        isTransitioning = false;
       });
   }
 
@@ -451,6 +482,8 @@
   }
 
   function navigateDay(offset) {
+    if (isTransitioning) return; // Kunci tombol saat transisi sedang berjalan
+
     let baseDate = parseDate(currentActiveDateStr);
     baseDate.setDate(baseDate.getDate() + offset);
 
@@ -459,7 +492,17 @@
 
     if (targetDateStr > todayStr) return;
 
-    loadData(targetDateStr, false);
+    isTransitioning = true;
+    const fadeWrapper = document.getElementById('contentFadeWrapper');
+    
+    // Mulai animasi Fade Out & Scroll ke Atas
+    if (fadeWrapper) fadeWrapper.classList.add('is-fading');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Beri jeda 180ms agar fade-out terasa halus sebelum mengganti data
+    setTimeout(() => {
+      loadData(targetDateStr, false);
+    }, 180);
   }
 
   /* --- LOGIKA KALENDER --- */
@@ -540,13 +583,18 @@
       const isAvailable = availableDatesList.includes(dateKey);
 
       if (isFuture) {
-        // TANGGAL MASA DEPAN: DIKUNCI & ABU-ABU
         cell.classList.add('disabled-future');
       } else if (isAvailable) {
-        // TANGGAL HARI INI / LAMPAU YANG ADA DATA: BIRU & BISA DIKLIK
         cell.classList.add('available');
         cell.onclick = function() {
-          loadData(dateKey, false);
+          if (isTransitioning) return;
+          isTransitioning = true;
+          const fadeWrapper = document.getElementById('contentFadeWrapper');
+          if (fadeWrapper) fadeWrapper.classList.add('is-fading');
+          
+          setTimeout(() => {
+            loadData(dateKey, false);
+          }, 180);
         };
       }
 
