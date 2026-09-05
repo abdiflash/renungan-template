@@ -12,7 +12,7 @@
   --card-shadow: 0 10px 30px rgba(15, 35, 63, 0.05);
   
   /* BORDER STROKE SOFT & ELEGAN */
-  --border-soft: rgba(27, 54, 93, 0.12); /* Border transparan sangat tipis */
+  --border-soft: rgba(27, 54, 93, 0.12);
   --border-subtle: #e2e8f0;
 }
 
@@ -28,7 +28,12 @@ body {
 }
 
 h1, h2, h3 { margin-top: 0; font-weight: 700; }
-button { font-family: inherit; cursor: pointer; border: none; }
+button { 
+  font-family: inherit; 
+  cursor: pointer; 
+  border: none !important; 
+  outline: none !important; 
+}
 
 /* ======================
    2. HEADER
@@ -91,7 +96,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .btn-nav-day {
   background: var(--accent);
   color: var(--primary);
-  border: 1px solid var(--border-soft);
+  border: none !important;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -105,7 +110,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .btn-nav-day:hover {
   background: var(--primary);
   color: white;
-  border-color: var(--primary);
 }
 
 .action-area-top {
@@ -217,7 +221,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 #displayIsi p {
   margin-top: 0;
-  margin-bottom: 0.75rem !important; /* Menutup jarak paragraf yang terlalu renggang */
+  margin-bottom: 0.75rem !important;
 }
 
 /* Kotak Refleksi */
@@ -265,7 +269,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
   font-size: 0.9rem;
   padding: 10px 22px;
   border-radius: 50px;
-  border: none;
+  border: none !important;
+  outline: none !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -282,7 +287,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 
 /* ======================
-   7. KALENDER UI (SOFT STROKE & SHADOW)
+   7. KALENDER UI (BEBAS STROKE KAKU)
 ====================== */
 .calendar-header {
   display: flex; 
@@ -298,24 +303,25 @@ button { font-family: inherit; cursor: pointer; border: none; }
   color: var(--primary); 
 }
 
+/* Tombol Panah Navigasi (< & >) */
 .nav-btn {
-  background: #ffffff; 
-  border: 1px solid var(--border-soft);
+  background: var(--accent); 
+  border: none !important;
+  outline: none !important;
   color: var(--primary); 
-  width: 34px; 
-  height: 34px;
+  width: 36px; 
+  height: 36px;
   border-radius: 50%; 
   display: flex; 
   align-items: center; 
   justify-content: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .nav-btn:hover { 
   background: var(--primary); 
-  color: white; 
-  border-color: var(--primary); 
+  color: #ffffff; 
 }
 
 .calendar-grid {
@@ -343,6 +349,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
   font-weight: 500; 
   font-size: 0.9rem;
   transition: all 0.2s ease;
+  border: none !important;
+  outline: none !important;
 }
 
 .date-cell.available { 
@@ -353,23 +361,28 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 .date-cell.available:hover { 
   background-color: var(--primary); 
-  color: white; 
+  color: #ffffff; 
 }
 
-/* TANGGAL AKTIF (Tanpa Border Keras, Diganti Ring Halus + Shadow) */
-.date-cell.today {
-  background: #ffffff;
-  color: #1b365d;
+/* TANGGAL AKTIF / SELECTED (Block warna solid + soft shadow, tanpa garis stroke) */
+.date-cell.today,
+.date-cell.selected,
+.date-cell.active {
+  background-color: var(--primary) !important;
+  color: #ffffff !important;
   font-weight: 700;
   border: none !important;
-  box-shadow: 0 4px 12px rgba(27, 54, 93, 0.12), inset 0 0 0 1.5px #3b82f6;
+  outline: none !important;
   border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(27, 54, 93, 0.25);
   transition: all 0.25s ease;
 }
 
-.date-cell.today:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.25), inset 0 0 0 1.5px #2563eb;
+.date-cell.today:hover,
+.date-cell.selected:hover,
+.date-cell.active:hover {
+  background-color: var(--primary-dark) !important;
+  transform: translateY(-1px);
 }
 
 .date-cell.locked { 
@@ -386,28 +399,28 @@ button { font-family: inherit; cursor: pointer; border: none; }
   border-top: 1px solid var(--border-subtle);
 }
 
-/* TOMBOL TUTUP KALENDER (Soft & Elegant) */
+/* TOMBOL TUTUP KALENDER (Tanpa Stroke Line) */
 .btn-close-calendar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 26px;
+  padding: 10px 28px;
   font-size: 14px;
   font-weight: 600;
   border-radius: 50px;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  background: #f8fafc;
-  color: #1b365d;
-  box-shadow: 0 2px 8px rgba(15, 35, 63, 0.06);
+  border: none !important;
+  outline: none !important;
+  background: var(--accent);
+  color: var(--primary);
+  box-shadow: 0 2px 8px rgba(15, 35, 63, 0.05);
   transition: all 0.25s ease;
   cursor: pointer;
   font-family: inherit;
 }
 
 .btn-close-calendar:hover {
-  background: #1b365d;
+  background: var(--primary);
   color: #ffffff;
-  border-color: #1b365d;
   box-shadow: 0 4px 14px rgba(27, 54, 93, 0.2);
   transform: translateY(-1px);
 }
