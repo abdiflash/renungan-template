@@ -141,7 +141,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   color: var(--primary);
 }
 
-/* Tombol Elegan (Soft Line) */
+/* Tombol Elegan Header */
 .btn-elegant {
   display: inline-flex;
   align-items: center;
@@ -168,7 +168,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 
 /* ======================
-   5. ISI PARAGRAF RENUNGAN (RAPAT & RAPI)
+   5. ISI PARAGRAF RENUNGAN
 ====================== */
 #articleContent {
   font-size: 100%; 
@@ -207,7 +207,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
   line-height: 1.5;
 }
 
-/* Mengatur Jarak Paragraf teks renungan */
 #displayIsi { 
   font-size: 1em; 
   color: var(--text-main); 
@@ -218,7 +217,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 #displayIsi p {
   margin-top: 0;
-  margin-bottom: 0.75rem !important; /* Menutup jarak yang terlalu lebar */
+  margin-bottom: 0.75rem !important; /* Menutup jarak paragraf yang terlalu renggang */
 }
 
 /* Kotak Refleksi */
@@ -247,7 +246,43 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 
 /* ======================
-   6. KALENDER UI (SOFT STROKE)
+   6. ACTIONS & TOMBOL WA
+====================== */
+.article-footer-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border-subtle);
+}
+
+.btn-share-wa {
+  background-color: #25d366;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 10px 22px;
+  border-radius: 50px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.28);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.btn-share-wa:hover {
+  background-color: #1eb956;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.38);
+}
+
+/* ======================
+   7. KALENDER UI (SOFT STROKE & SHADOW)
 ====================== */
 .calendar-header {
   display: flex; 
@@ -263,7 +298,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
   color: var(--primary); 
 }
 
-/* Tombol Navigasi Panah Kalender (< & >) */
 .nav-btn {
   background: #ffffff; 
   border: 1px solid var(--border-soft);
@@ -305,11 +339,10 @@ button { font-family: inherit; cursor: pointer; border: none; }
   display: flex; 
   align-items: center; 
   justify-content: center;
-  border-radius: 8px; 
+  border-radius: 10px; 
   font-weight: 500; 
   font-size: 0.9rem;
   transition: all 0.2s ease;
-  border: 1px solid transparent;
 }
 
 .date-cell.available { 
@@ -323,13 +356,20 @@ button { font-family: inherit; cursor: pointer; border: none; }
   color: white; 
 }
 
-/* TANGGAL HARI INI / AKTIF (Garis tepi tipis & halus, bukan navy keras) */
+/* TANGGAL AKTIF (Tanpa Border Keras, Diganti Ring Halus + Shadow) */
 .date-cell.today {
-  background: #eff6ff; 
-  border: 1.5px solid #3b82f6; /* Menggunakan biru terang tipis */
-  color: #1e40af;
+  background: #ffffff;
+  color: #1b365d;
   font-weight: 700;
-  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.15);
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(27, 54, 93, 0.12), inset 0 0 0 1.5px #3b82f6;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+}
+
+.date-cell.today:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.25), inset 0 0 0 1.5px #2563eb;
 }
 
 .date-cell.locked { 
@@ -346,33 +386,34 @@ button { font-family: inherit; cursor: pointer; border: none; }
   border-top: 1px solid var(--border-subtle);
 }
 
-/* TOMBOL TUTUP KALENDER (Garis Tipis Soft) */
+/* TOMBOL TUTUP KALENDER (Soft & Elegant) */
 .btn-close-calendar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 24px;
+  padding: 10px 26px;
   font-size: 14px;
   font-weight: 600;
   border-radius: 50px;
-  transition: all 0.2s ease;
-  height: 40px;
-  border: 1px solid var(--border-soft); /* Garis 1px halus transparan */
-  background: #ffffff;
-  color: var(--primary);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: #f8fafc;
+  color: #1b365d;
+  box-shadow: 0 2px 8px rgba(15, 35, 63, 0.06);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .btn-close-calendar:hover {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(27, 54, 93, 0.15);
+  background: #1b365d;
+  color: #ffffff;
+  border-color: #1b365d;
+  box-shadow: 0 4px 14px rgba(27, 54, 93, 0.2);
   transform: translateY(-1px);
 }
 
 /* ======================
-   7. FOOTER
+   8. FOOTER
 ====================== */
 .app-footer {
   text-align: center;
