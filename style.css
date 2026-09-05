@@ -4,15 +4,15 @@
 :root {
   --primary: #1b365d;        /* Navy Blue Utama */
   --primary-dark: #0f233f;   /* Midnight Navy */
-  --accent: #e8f1f5;          /* Soft Ice Blue */
-  --highlight: #d97706;      /* Warm Gold / Amber Accent */
-  --bg-body: #f4f7f9;        /* Soft Cool Grey Background */
-  --text-main: #1e293b;      /* Slate Dark Text */
+  --accent: #f0f5fa;         /* Soft Ice Blue Background */
+  --highlight: #d97706;      /* Warm Gold Accent */
+  --bg-body: #f8fafc;        /* Soft Cool Grey Background */
+  --text-main: #334155;      /* Slate Dark Text */
   --text-muted: #64748b;     /* Muted Slate */
-  --card-shadow: 0 8px 24px rgba(15, 35, 63, 0.06);
+  --card-shadow: 0 10px 30px rgba(15, 35, 63, 0.05);
   
-  /* Variable Border Soft/Elegan */
-  --border-soft: rgba(27, 54, 93, 0.15); 
+  /* BORDER STROKE SOFT & ELEGAN */
+  --border-soft: rgba(27, 54, 93, 0.12); /* Border transparan sangat tipis */
   --border-subtle: #e2e8f0;
 }
 
@@ -23,7 +23,7 @@ body {
   margin: 0;
   background: var(--bg-body);
   color: var(--text-main);
-  line-height: 1.6;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -40,17 +40,17 @@ button { font-family: inherit; cursor: pointer; border: none; }
   text-align: center;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
-  box-shadow: 0 4px 16px rgba(15, 35, 63, 0.2);
+  box-shadow: 0 4px 16px rgba(15, 35, 63, 0.15);
 }
 
-.app-header h1 { font-size: 1.6rem; margin-bottom: 0.5rem; letter-spacing: 0.5px; }
-.app-header p { margin: 0; font-size: 0.95rem; opacity: 0.9; }
+.app-header h1 { font-size: 1.6rem; margin-bottom: 0.4rem; letter-spacing: 0.5px; }
+.app-header p { margin: 0; font-size: 0.95rem; opacity: 0.85; }
 
 /* ======================
    3. LAYOUT CONTAINER
 ====================== */
 .container {
-  max-width: 720px;
+  max-width: 680px;
   margin: -40px auto 40px auto; 
   padding: 0 15px;
   position: relative;
@@ -58,11 +58,11 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 
 /* ======================
-   4. RENUNGAN CARD & UI TOP BUTTONS
+   4. CARD & TOP BUTTONS
 ====================== */
 #renungan, #calendar, #emptyState {
   background: white;
-  padding: 25px;
+  padding: 24px;
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   border: 1px solid var(--border-subtle);
@@ -72,22 +72,22 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 #renungan header {
   border-bottom: 1px solid var(--border-subtle);
-  padding-bottom: 20px;
-  margin-bottom: 20px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
   text-align: center;
 }
 
-#renungan h2 { color: var(--primary); font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+#renungan h2 { color: var(--primary); font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
 #renungan time { display: block; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; margin: 0 10px; }
 
-/* Navigasi Tanggal Cepat */
 .date-navigation {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
+/* Tombol Navigasi Tanggal Soft */
 .btn-nav-day {
   background: var(--accent);
   color: var(--primary);
@@ -108,15 +108,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
   border-color: var(--primary);
 }
 
-.audio-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;    
-  gap: 15px;
-  margin-top: 10px;
-  width: 100%;
-}
-
 .action-area-top {
   display: flex;
   gap: 10px;
@@ -126,10 +117,9 @@ button { font-family: inherit; cursor: pointer; border: none; }
   width: 100%;
 }
 
-/* Pengatur Ukuran Font */
 .font-controls {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   background: var(--accent);
   padding: 3px;
   border-radius: 50px;
@@ -151,6 +141,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   color: var(--primary);
 }
 
+/* Tombol Elegan (Soft Line) */
 .btn-elegant {
   display: inline-flex;
   align-items: center;
@@ -160,42 +151,24 @@ button { font-family: inherit; cursor: pointer; border: none; }
   font-size: 14px;
   font-weight: 600;
   border-radius: 50px;
-  transition: all 0.25s ease;
-  min-width: 140px;
-  border: 1.5px solid var(--border-soft); /* Dibuat lebih tipis & lembut */
-  background: white;
+  transition: all 0.2s ease;
+  min-width: 130px;
+  border: 1px solid var(--border-soft);
+  background: #ffffff;
   color: var(--primary);
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(15, 35, 63, 0.04);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .btn-elegant:hover {
   background: var(--primary);
   color: white;
   border-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(27, 54, 93, 0.15);
+  box-shadow: 0 4px 12px rgba(27, 54, 93, 0.12);
   transform: translateY(-1px);
 }
 
-.audio-slider {
-  width: 100%;
-  max-width: 320px;      
-  height: 40px;
-  display: block;        
-  margin: 5px auto;      
-  border-radius: 50px;   
-  background-color: var(--accent);
-  outline: none;
-  filter: sepia(10%) saturate(100%) hue-rotate(185deg);
-}
-
-#audioPlayer {
-  clear: both; 
-  display: none;
-}
-
 /* ======================
-   5. CONTENT AREA
+   5. ISI PARAGRAF RENUNGAN (RAPAT & RAPI)
 ====================== */
 #articleContent {
   font-size: 100%; 
@@ -203,18 +176,18 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 
 #displayJudul {
-  font-size: 1.4em; 
+  font-size: 1.35em; 
   color: var(--primary-dark);
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
   text-align: center;
-  line-height: 1.35;
+  line-height: 1.3;
 }
 
 .ayat-box {
   background: var(--accent);
-  border-left: 4px solid var(--primary); /* Dipertipis dari 5px */
-  padding: 15px 20px;
-  margin: 20px 0;
+  border-left: 3px solid var(--primary);
+  padding: 12px 16px;
+  margin: 16px 0;
   border-radius: 0 8px 8px 0;
 }
 
@@ -222,36 +195,39 @@ button { font-family: inherit; cursor: pointer; border: none; }
   display: block; 
   font-weight: bold; 
   color: var(--primary); 
-  margin-bottom: 6px; 
-  font-size: 1em; 
+  margin-bottom: 4px; 
+  font-size: 0.95em; 
 }
 
 .ayat-text { 
   font-style: italic; 
   color: #334155; 
   margin: 0; 
-  font-size: 1em; 
-  text-align: left; 
-  white-space: pre-wrap; 
+  font-size: 0.95em; 
+  line-height: 1.5;
 }
 
+/* Mengatur Jarak Paragraf teks renungan */
 #displayIsi { 
   font-size: 1em; 
   color: var(--text-main); 
   text-align: left; 
-  margin-bottom: 25px; 
-  line-height: 1.7; 
-  white-space: pre-wrap; 
-  word-break: break-word; 
+  line-height: 1.6; 
+  margin-bottom: 20px;
+}
+
+#displayIsi p {
+  margin-top: 0;
+  margin-bottom: 0.75rem !important; /* Menutup jarak yang terlalu lebar */
 }
 
 /* Kotak Refleksi */
 .refleksi-box {
   background: #fffdf5; 
-  padding: 16px;
-  border-radius: 10px;
-  border: 1px dashed rgba(217, 119, 6, 0.4); /* Dashed dibuat transparan/lembut */
-  margin-top: 20px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  border: 1px dashed rgba(217, 119, 6, 0.3);
+  margin-top: 16px;
 }
 
 .refleksi-label { 
@@ -259,8 +235,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   font-weight: bold; 
   color: #b45309; 
   text-transform: uppercase; 
-  margin-bottom: 5px; 
-  letter-spacing: 0.5px;
+  margin-bottom: 4px; 
 }
 
 .refleksi-content { 
@@ -268,183 +243,148 @@ button { font-family: inherit; cursor: pointer; border: none; }
   font-style: italic; 
   color: #451a03; 
   font-size: 0.95em; 
-  text-align: left; 
-  white-space: pre-wrap; 
+  line-height: 1.5;
 }
 
 /* ======================
-   6. ACTIONS & STATS
-====================== */
-.article-footer-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px dashed var(--border-subtle);
-}
-
-.btn-share-wa {
-  background: #25d366;
-  color: white;
-  font-weight: 600;
-  padding: 10px 22px;
-  border-radius: 50px;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2);
-}
-
-.btn-share-wa:hover {
-  background: #1eb956;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(37, 211, 102, 0.3);
-}
-
-.reader-stats {
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
-#count {
-  color: var(--primary);
-  font-weight: 800;
-}
-
-/* ======================
-   7. KALENDER UI 
+   6. KALENDER UI (SOFT STROKE)
 ====================== */
 .calendar-header {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 20px; padding: 0 5px;
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  margin-bottom: 16px; 
+  padding: 0 4px;
 }
-.calendar-header h3 { font-size: 1.2rem; margin: 0; color: var(--primary); }
 
-.nav-btn {
-  background: transparent; 
-  border: 1px solid var(--border-soft); /* Garis tombol navigasi kalender dibuat lembut */
-  color: var(--primary); width: 32px; height: 32px;
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  transition: 0.2s;
+.calendar-header h3 { 
+  font-size: 1.15rem; 
+  margin: 0; 
+  color: var(--primary); 
 }
-.nav-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* Tombol Navigasi Panah Kalender (< & >) */
+.nav-btn {
+  background: #ffffff; 
+  border: 1px solid var(--border-soft);
+  color: var(--primary); 
+  width: 34px; 
+  height: 34px;
+  border-radius: 50%; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover { 
+  background: var(--primary); 
+  color: white; 
+  border-color: var(--primary); 
+}
 
 .calendar-grid {
-  display: grid; grid-template-columns: repeat(7, 1fr);
-  gap: 8px; margin-bottom: 20px;
+  display: grid; 
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px; 
+  margin-bottom: 16px;
 }
 
 .day-name {
-  text-align: center; font-size: 0.8rem; font-weight: bold;
-  color: #94a3b8; text-transform: uppercase; margin-bottom: 5px;
+  text-align: center; 
+  font-size: 0.75rem; 
+  font-weight: 700;
+  color: #94a3b8; 
+  text-transform: uppercase; 
+  margin-bottom: 4px;
 }
 
 .date-cell {
-  aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center;
-  border-radius: 10px; font-weight: 500; font-size: 0.95rem;
-  position: relative; transition: all 0.2s ease;
+  aspect-ratio: 1 / 1; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  border-radius: 8px; 
+  font-weight: 500; 
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
 
-.date-cell.available { background-color: var(--accent); color: var(--primary); cursor: pointer; }
-.date-cell.available:hover { background-color: var(--primary); color: white; transform: scale(1.05); z-index: 2; }
+.date-cell.available { 
+  background-color: var(--accent); 
+  color: var(--primary); 
+  cursor: pointer; 
+}
 
-/* Tanggal Aktif / Hari Ini - Stroke Diperhalus */
+.date-cell.available:hover { 
+  background-color: var(--primary); 
+  color: white; 
+}
+
+/* TANGGAL HARI INI / AKTIF (Garis tepi tipis & halus, bukan navy keras) */
 .date-cell.today {
   background: #eff6ff; 
-  border: 1.5px solid #3b82f6; /* Garis diganti dari 3px navy tebal menjadi 1.5px biru lembut */
-  color: var(--primary-dark);
+  border: 1.5px solid #3b82f6; /* Menggunakan biru terang tipis */
+  color: #1e40af;
   font-weight: 700;
-  position: relative;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.18); /* Efek glow lembut tanpa garis kaku */
-  border-radius: 10px; 
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.15);
 }
 
-.date-cell.today:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.28);
+.date-cell.locked { 
+  background-color: #f8fafc; 
+  color: #cbd5e1; 
+  cursor: not-allowed; 
 }
-
-.date-cell.available.future-unlocked {
-  background: linear-gradient(135deg, #2563eb, var(--primary)); 
-  color: #ffffff; 
-  font-weight: 600;
-}
-
-.date-cell.available.future-unlocked:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-}
-
-.date-cell.locked { background-color: #f8fafc; color: #cbd5e1; cursor: not-allowed; }
 
 .calendar-footer {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
-  padding-top: 15px;
+  margin-top: 16px;
+  padding-top: 14px;
   border-top: 1px solid var(--border-subtle);
 }
 
-/* Tombol Tutup Kalender - Stroke Diperhalus */
+/* TOMBOL TUTUP KALENDER (Garis Tipis Soft) */
 .btn-close-calendar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 10px 20px;
+  padding: 8px 24px;
   font-size: 14px;
   font-weight: 600;
   border-radius: 50px;
-  transition: all 0.25s ease;
-  min-width: 145px;
-  height: 42px;
-  border: 1.5px solid var(--border-soft); /* Menggantikan 2px navy keras */
-  background: white;
+  transition: all 0.2s ease;
+  height: 40px;
+  border: 1px solid var(--border-soft); /* Garis 1px halus transparan */
+  background: #ffffff;
   color: var(--primary);
-  font-family: inherit;
-  box-shadow: 0 2px 6px rgba(15, 35, 63, 0.04);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
 }
 
 .btn-close-calendar:hover {
   background: var(--primary);
   color: white;
   border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(27, 54, 93, 0.15);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(15, 35, 63, 0.15);
 }
 
 /* ======================
-   8. FOOTER
+   7. FOOTER
 ====================== */
 .app-footer {
-  background: transparent;
-  color: var(--text-muted);
   text-align: center;
-  padding: 2rem 1rem 4rem 1rem;
-  margin-top: 20px;
-  border-top: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  padding: 1.5rem 1rem 3rem 1rem;
+  font-size: 0.85rem;
 }
 
-.footer-link {
-  color: var(--primary);
-  text-decoration: none;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.loading { padding: 50px; text-align: center; color: var(--text-muted); }
+.loading { padding: 40px; text-align: center; color: var(--text-muted); }
 .hidden { display: none !important; }
 
 @keyframes slideUpFade {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 480px) {
-  .btn-elegant { min-width: 120px; padding: 8px 12px; font-size: 0.8rem; }
-  .action-area-top { gap: 6px; }
-  #displayJudul { font-size: 1.3em; }
-  #displayIsi, .ayat-text, .refleksi-content { text-align: left; }
 }
