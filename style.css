@@ -287,7 +287,7 @@ button {
 }
 
 /* ======================
-   7. KALENDER UI (BEBAS STROKE KAKU)
+   7. KALENDER UI
 ====================== */
 .calendar-header {
   display: flex; 
@@ -349,8 +349,9 @@ button {
   font-weight: 500; 
   font-size: 0.9rem;
   transition: all 0.2s ease;
-  border: none !important;
+  border: 0 !important;
   outline: none !important;
+  box-shadow: none !important;
 }
 
 .date-cell.available { 
@@ -364,23 +365,24 @@ button {
   color: #ffffff; 
 }
 
-/* TANGGAL AKTIF / SELECTED (Block warna solid + soft shadow, tanpa garis stroke) */
+/* TANGGAL AKTIF / SELECTED - Solid Navy tanpa Stroke Kaku */
 .date-cell.today,
 .date-cell.selected,
-.date-cell.active {
+.date-cell.active,
+.date-cell.current {
   background-color: var(--primary) !important;
   color: #ffffff !important;
-  font-weight: 700;
-  border: none !important;
+  font-weight: 700 !important;
+  border: 0 !important;
   outline: none !important;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(27, 54, 93, 0.25);
-  transition: all 0.25s ease;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 12px rgba(27, 54, 93, 0.25) !important;
 }
 
 .date-cell.today:hover,
 .date-cell.selected:hover,
-.date-cell.active:hover {
+.date-cell.active:hover,
+.date-cell.current:hover {
   background-color: var(--primary-dark) !important;
   transform: translateY(-1px);
 }
@@ -399,30 +401,30 @@ button {
   border-top: 1px solid var(--border-subtle);
 }
 
-/* TOMBOL TUTUP KALENDER (Tanpa Stroke Line) */
+/* TOMBOL TUTUP KALENDER - Abu-abu Soft */
 .btn-close-calendar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 28px;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 50px;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px 28px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 50px !important;
   border: none !important;
   outline: none !important;
-  background: var(--accent);
-  color: var(--primary);
-  box-shadow: 0 2px 8px rgba(15, 35, 63, 0.05);
-  transition: all 0.25s ease;
-  cursor: pointer;
-  font-family: inherit;
+  background-color: #e2e8f0 !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 2px 6px rgba(15, 35, 63, 0.06) !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
 }
 
 .btn-close-calendar:hover {
-  background: var(--primary);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(27, 54, 93, 0.2);
-  transform: translateY(-1px);
+  background-color: var(--primary) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(27, 54, 93, 0.18) !important;
+  transform: translateY(-1px) !important;
 }
 
 /* ======================
