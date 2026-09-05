@@ -439,8 +439,9 @@ audio {
   border-top: 1px solid var(--border-subtle);
 }
 
-/* Tombol Tutup Kalender Soft Grey */
-.btn-close-calendar {
+/* Tombol Tutup Kalender (Sesuai style Putar Audio / .btn-elegant) */
+.btn-close-calendar,
+.btn-close-cal {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -450,18 +451,17 @@ audio {
   border-radius: 50px !important;
   border: none !important;
   outline: none !important;
-  background-color: #e2e8f0 !important;
-  color: var(--text-main) !important;
-  box-shadow: 0 2px 6px rgba(15, 35, 63, 0.05) !important;
+  background-color: var(--accent) !important; /* Biru muda lembut (#f0f5fa) */
+  color: var(--primary) !important;            /* Biru navy (#1b365d) */
   transition: all 0.2s ease !important;
   cursor: pointer !important;
 }
 
-.btn-close-calendar:hover {
-  background-color: var(--primary) !important;
-  color: #ffffff !important;
+.btn-close-calendar:hover,
+.btn-close-cal:hover {
+  background-color: var(--primary) !important;  /* Menjadi navy saat di-hover */
+  color: #ffffff !important;                   /* Teks jadi putih */
   box-shadow: 0 4px 12px rgba(27, 54, 93, 0.18) !important;
-  transform: translateY(-1px) !important;
 }
 
 /* ==============================================
