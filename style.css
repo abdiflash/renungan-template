@@ -1,127 +1,267 @@
 /* ==============================================
-   1. FUTURISTIC DARK GLASSMORPHISM DESIGN SYSTEM
+   SYSTEM DESIGN & STYLESHEET RENUNGAN HARIAN
 ================================================= */
 :root {
-  --bg-dark: #090d16;
-  --card-bg: rgba(18, 26, 43, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --primary: #6366f1;          /* Neon Indigo */
-  --primary-glow: rgba(99, 102, 241, 0.4);
-  --accent-cyan: #06b6d4;      /* Cyber Cyan */
-  --accent-glow: rgba(6, 182, 212, 0.3);
-  --text-main: #f8fafc;
+  --primary: #1b3058;
+  --primary-hover: #122240;
+  --bg-body: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #334155;
   --text-muted: #64748b;
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-
-  /* Refleksi & Accent Boxes */
-  --refleksi-bg: rgba(245, 158, 11, 0.05);
-  --refleksi-border: rgba(245, 158, 11, 0.3);
-  --refleksi-label: #fbbf24;
-  --refleksi-text: #fef3c7;
+  --border-subtle: #e2e8f0;
+  --blue-soft: #dbeafe;
+  --blue-soft-hover: #bfdbfe;
+  --shadow-card: 0 10px 30px rgba(27, 48, 88, 0.08);
+  
+  --refleksi-bg: #fffbf0;
+  --refleksi-border: #fcd34d;
+  --refleksi-label: #b45309;
+  --refleksi-text: #451a03;
 }
 
-*, *::before, *::after { 
-  box-sizing: border-box; 
-  margin: 0; 
-  padding: 0; 
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', 'Segoe UI', -apple-system, sans-serif;
-  background-color: var(--bg-dark);
-  background-image: 
-    radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.15) 0%, transparent 35%),
-    radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.12) 0%, transparent 35%);
-  background-attachment: fixed;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  background-color: var(--bg-body);
   color: var(--text-main);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: transparent;
-  min-height: 100vh;
-}
-
-h1, h2, h3 { 
-  margin-top: 0; 
-  font-weight: 700; 
-}
-
-button { 
-  font-family: inherit; 
-  cursor: pointer; 
-  border: none; 
-  outline: none; 
 }
 
 /* ==============================================
-   2. HEADER
+   1. APP HEADER
 ================================================= */
 .app-header {
-  background: transparent;
+  background-color: var(--primary);
   color: #ffffff;
   padding: 2.5rem 1rem 3.5rem 1rem;
   text-align: center;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  box-shadow: 0 4px 15px rgba(27, 48, 88, 0.15);
 }
 
-.app-header h1 { 
-  font-size: 1.75rem; 
-  font-weight: 800; 
-  margin-bottom: 0.25rem; 
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.app-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.01em;
 }
 
-.app-header p { 
-  font-size: 0.85rem; 
-  color: #a5b4fc; 
-  font-weight: 600; 
-  letter-spacing: 1px;
-  text-transform: uppercase;
+.app-header p {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  font-weight: 500;
 }
 
 /* ==============================================
-   3. CONTAINER & GLASS CARDS
+   2. CONTAINER & LAYOUT UTAMA
 ================================================= */
 .container {
   max-width: 600px;
-  margin: -30px auto 40px auto; 
+  margin: -40px auto 40px auto;
   padding: 0 16px;
   position: relative;
   z-index: 10;
 }
 
-#renungan, #calendar, #emptyState {
-  background: var(--card-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 28px;
-  border-radius: 24px;
-  box-shadow: var(--card-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  border: 1px solid var(--glass-border);
+/* Animasi Transisi Halus (Smooth Fade) */
+.fade-wrapper {
+  transition: opacity 0.2s ease-in-out;
+  opacity: 1;
+}
+
+.fade-wrapper.is-fading {
+  opacity: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.loading {
+  text-align: center;
+  color: #ffffff;
+  background: rgba(27, 48, 88, 0.85);
+  backdrop-filter: blur(4px);
+  padding: 10px 16px;
+  border-radius: 50px;
+  margin: 0 auto 16px auto;
+  width: fit-content;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ==============================================
+   3. DESAIN KALENDER MODERN
+================================================= */
+#calendarSection {
   margin-bottom: 20px;
-  animation: slideUpFade 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.calendar-card {
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 28px 22px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-subtle);
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 0 4px;
+}
+
+.cal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.btn-cal-nav {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid var(--primary);
+  background: transparent;
+  color: var(--primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.btn-cal-nav:hover {
+  background-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(27, 48, 88, 0.2);
+}
+
+.cal-grid-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.cal-grid-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.cal-day-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #b0b0b0;
+  background-color: #f8fafc;
+  cursor: default;
+  user-select: none;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  border: 1.5px solid transparent;
+}
+
+/* Tanggal yang Tersedia (Ada Renungan) */
+.cal-day-cell.available {
+  background-color: var(--blue-soft);
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.cal-day-cell.available:hover {
+  background-color: var(--blue-soft-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(27, 48, 88, 0.12);
+}
+
+/* Tanggal Aktif / Terpilih (Misal: Tanggal 16) */
+.cal-day-cell.selected {
+  background-color: var(--primary);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(27, 48, 88, 0.3);
+  transform: scale(1.05);
+  border: none;
+}
+
+/* Tanggal Mendatang (Terkunci) */
+.cal-day-cell.disabled-future {
+  background-color: #f1f5f9;
+  color: #cbd5e1;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.cal-day-cell.empty {
+  background: transparent;
+  border: none;
+}
+
+.cal-footer {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.btn-close-cal {
+  background: #ffffff;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  border-radius: 50px;
+  padding: 10px 32px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  max-width: 220px;
+}
+
+.btn-close-cal:hover {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(27, 48, 88, 0.2);
+}
+
+/* ==============================================
+   4. KONTEN RENUNGAN & ARTIKEL
+================================================= */
+#renungan, #emptyState {
+  background: var(--card-bg);
+  padding: 28px 24px;
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-subtle);
+  margin-bottom: 20px;
 }
 
 #renungan header {
   border-bottom: 1px solid var(--border-subtle);
   padding-bottom: 16px;
   margin-bottom: 20px;
-  text-align: center;
 }
 
-#renungan h2 { 
-  color: var(--accent-cyan); 
-  font-size: 0.85rem; 
-  text-transform: uppercase; 
-  letter-spacing: 1.5px; 
-  margin-bottom: 8px; 
-}
-
-/* ==============================================
-   4. TOP CONTROL BAR
-================================================= */
 .date-navigation {
   display: flex;
   align-items: center;
@@ -130,32 +270,46 @@ button {
   margin-bottom: 16px;
 }
 
-.date-navigation time, 
-.date-display {
+.displayDateText {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--primary);
 }
 
-.btn-nav-day, .btn-calendar-trigger {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-main);
-  border: 1px solid var(--glass-border);
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  display: inline-flex;
+.btn-nav-day {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-body);
+  color: var(--primary);
+  display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.85rem;
-  transition: all 0.2s ease;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.2s ease, background 0.2s ease;
 }
 
-.btn-nav-day:hover, .btn-calendar-trigger:hover {
-  background: rgba(99, 102, 241, 0.2);
-  border-color: var(--primary);
+.btn-nav-day:hover:not(:disabled) {
+  background: var(--primary);
   color: #ffffff;
-  box-shadow: 0 0 12px var(--primary-glow);
+}
+
+.btn-nav-day:active:not(:disabled) {
+  transform: scale(0.9);
+}
+
+.btn-nav-day:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.audio-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 .action-area-top {
@@ -163,33 +317,33 @@ button {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin-bottom: 16px;
   flex-wrap: wrap;
 }
 
 .font-controls {
   display: inline-flex;
   align-items: center;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid var(--glass-border);
-  padding: 4px;
+  background: var(--bg-body);
+  border: 1px solid var(--border-subtle);
+  padding: 3px;
   border-radius: 50px;
-  gap: 2px;
 }
 
 .btn-font {
   background: transparent;
-  color: var(--text-muted);
+  border: none;
+  color: var(--primary);
   font-weight: 700;
   font-size: 0.8rem;
   padding: 4px 12px;
   border-radius: 50px;
+  cursor: pointer;
   transition: all 0.2s;
 }
 
 .btn-font:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .btn-elegant {
@@ -201,119 +355,103 @@ button {
   font-size: 0.85rem;
   font-weight: 600;
   border-radius: 50px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--glass-border);
-  color: var(--text-main);
+  background: var(--bg-body);
+  border: 1px solid var(--border-subtle);
+  color: var(--primary);
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .btn-elegant:hover {
   background: var(--primary);
-  border-color: var(--primary);
   color: #ffffff;
-  box-shadow: 0 0 15px var(--primary-glow);
 }
 
-/* Pemutar Audio */
-.audio-wrapper, #audioContainer {
+.audio-slider {
   width: 100%;
-  margin: 12px 0;
-  display: flex;
-  justify-content: center;
-}
-
-audio {
-  width: 100%;
-  max-width: 500px;
-  height: 42px;
+  max-width: 450px;
+  height: 40px;
+  margin-top: 8px;
   border-radius: 50px;
-  filter: invert(0.9) hue-rotate(180deg);
 }
 
-/* ==============================================
-   5. CONTENT AREA
-================================================= */
 #articleContent {
-  font-size: 100%; 
   transition: font-size 0.2s ease-in-out;
 }
 
 #displayJudul {
-  font-size: 1.4em; 
-  color: #ffffff;
+  font-size: 1.4em;
+  color: var(--primary);
   margin-bottom: 1rem;
   text-align: center;
   line-height: 1.35;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .ayat-box {
-  background: rgba(99, 102, 241, 0.08);
-  border-left: 3px solid var(--primary);
-  border-top: 1px solid var(--glass-border);
-  border-right: 1px solid var(--glass-border);
-  border-bottom: 1px solid var(--glass-border);
-  padding: 16px 20px;
-  margin: 20px 0;
-  border-radius: 0 14px 14px 0;
+  background: var(--bg-body);
+  border-left: 4px solid var(--primary);
+  padding: 14px 18px;
+  margin: 18px 0;
+  border-radius: 0 12px 12px 0;
 }
 
-.ayat-ref { 
-  display: block; 
-  font-weight: 700; 
-  color: var(--accent-cyan); 
-  margin-bottom: 4px; 
-  font-size: 0.95em; 
+.ayat-ref {
+  display: block;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+  font-size: 0.95em;
 }
 
-.ayat-text { 
-  font-style: italic; 
-  color: #e2e8f0; 
-  margin: 0; 
-  font-size: 0.95em; 
-  line-height: 1.6;
+.ayat-text {
+  font-style: italic;
+  color: var(--text-main);
+  margin: 0;
+  font-size: 0.95em;
+  line-height: 1.5;
 }
 
-#displayIsi { 
-  font-size: 1em; 
-  color: #cbd5e1; 
-  text-align: left; 
-  line-height: 1.7; 
+#displayIsi {
+  font-size: 1em;
+  color: var(--text-main);
+  text-align: left;
+  line-height: 1.7;
   margin-bottom: 20px;
 }
 
 #displayIsi p {
   margin-top: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 0.85rem;
 }
 
 .refleksi-box {
-  background: var(--refleksi-bg); 
-  padding: 18px 20px;
+  background: var(--refleksi-bg);
+  padding: 16px 18px;
   border-radius: 14px;
   border: 1px dashed var(--refleksi-border);
   margin-top: 24px;
 }
 
-.refleksi-label { 
-  font-size: 0.75em; 
-  font-weight: 800; 
-  color: var(--refleksi-label); 
-  text-transform: uppercase; 
-  letter-spacing: 1px;
-  margin-bottom: 6px; 
+.refleksi-label {
+  font-size: 0.75em;
+  font-weight: 800;
+  color: var(--refleksi-label);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
 }
 
-.refleksi-content { 
-  margin: 0; 
-  font-style: italic; 
-  color: var(--refleksi-text); 
-  font-size: 0.95em; 
-  line-height: 1.6;
+.refleksi-content {
+  margin: 0;
+  font-style: italic;
+  color: var(--refleksi-text);
+  font-size: 0.95em;
+  line-height: 1.55;
 }
 
 /* ==============================================
-   6. ACTIONS & SHARE
+   5. FOOTER ARTIKEL & SHARE
 ================================================= */
 .article-footer-actions {
   display: flex;
@@ -326,237 +464,76 @@ audio {
   text-align: center;
 }
 
-.read-count, .read-count-badge {
+.read-count-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--glass-border);
+  background-color: var(--bg-body);
+  border: 1px solid var(--border-subtle);
   color: var(--text-muted);
   padding: 6px 16px;
   border-radius: 50px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
 .btn-share-wa {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background-color: #25d366;
   color: #ffffff;
-  font-weight: 700;
-  font-size: 0.85rem;
-  padding: 12px 28px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 11px 26px;
   border-radius: 50px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
-  transition: all 0.2s ease;
-}
-
-.btn-share-wa:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.45);
-}
-
-/* ==============================================
-   7. KALENDER FUTURISTIK
-================================================= */
-#calendar, .calendar-card {
-  width: 100%;
-  padding: 28px;
-}
-
-.calendar-header {
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center;
-  margin-bottom: 24px; 
-}
-
-.calendar-header h3 { 
-  font-size: 1.25rem; 
-  font-weight: 800;
-  color: #ffffff; 
-  letter-spacing: 0.3px;
-}
-
-.nav-btn {
-  background: rgba(255, 255, 255, 0.04); 
-  border: 1px solid var(--glass-border);
-  color: var(--text-main); 
-  width: 38px; 
-  height: 38px;
-  border-radius: 12px; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  font-size: 0.85rem;
-  transition: all 0.2s ease;
-}
-
-.nav-btn:hover { 
-  background: rgba(255, 255, 255, 0.12); 
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-.calendar-grid {
-  display: grid; 
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px; 
-  margin-bottom: 24px;
-}
-
-.day-name {
-  text-align: center; 
-  font-size: 0.75rem; 
-  font-weight: 700;
-  color: var(--text-muted); 
-  text-transform: uppercase; 
-  letter-spacing: 1px;
-  padding-bottom: 8px;
-}
-
-.date-cell {
-  aspect-ratio: 1 / 1; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  border-radius: 14px; 
-  font-weight: 600; 
-  font-size: 0.95rem; 
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  background: rgba(255, 255, 255, 0.015);
-  border: 1px solid transparent;
-  color: var(--text-muted);
-}
-
-/* Tanggal Tersedia (H-N) */
-.date-cell.available { 
-  background: rgba(255, 255, 255, 0.04); 
-  border-color: rgba(255, 255, 255, 0.06);
-  color: #ffffff; 
-  cursor: pointer; 
-}
-
-.date-cell.available::after {
-  content: '';
-  position: absolute;
-  bottom: 5px;
-  width: 4px;
-  height: 4px;
-  background: var(--accent-cyan);
-  border-radius: 50%;
-  box-shadow: 0 0 6px var(--accent-cyan);
-}
-
-.date-cell.available:hover { 
-  background: rgba(99, 102, 241, 0.2); 
-  border-color: var(--primary);
-  transform: translateY(-2px) scale(1.04);
-}
-
-/* Tanggal Hari Ini (H) - Neon Glow */
-.date-cell.today,
-.date-cell.selected,
-.date-cell.active,
-.date-cell.current {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--accent-cyan) 100%);
-  color: #ffffff;
-  font-weight: 800;
-  border: none;
-  box-shadow: 0 0 20px var(--primary-glow);
-  transform: scale(1.05);
-}
-
-.date-cell.today::after {
-  background: #ffffff;
-  box-shadow: 0 0 6px #ffffff;
-}
-
-/* Tanggal Terkunci (H+1 Ke Atas) */
-.date-cell.locked { 
-  background: rgba(0, 0, 0, 0.2); 
-  border: 1px dashed rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.15); 
-  cursor: not-allowed; 
-  pointer-events: none;
-}
-
-.date-cell.locked::after {
-  display: none;
-}
-
-/* Tombol Tutup Kalender */
-.calendar-footer {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border-subtle);
-}
-
-.btn-close-calendar, .btn-close-cal {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 28px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  border-radius: 50px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--glass-border);
-  color: var(--text-main); 
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.25);
   transition: all 0.2s ease;
   cursor: pointer;
 }
 
-.btn-close-calendar:hover, .btn-close-cal:hover {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.4);
-  color: #fca5a5;
+.btn-share-wa:hover {
+  background-color: #1eb956;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.35);
 }
 
 /* ==============================================
-   8. FOOTER
+   6. GLOBAL APP FOOTER
 ================================================= */
 .app-footer {
   text-align: center;
   color: var(--text-muted);
   padding: 1.5rem 1rem 3rem 1rem;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
 }
 
-.app-footer a {
-  color: var(--accent-cyan);
+.footer-link {
+  color: var(--primary);
   text-decoration: none;
+  font-weight: 600;
 }
 
-.loading { padding: 40px; text-align: center; color: var(--text-muted); }
-.hidden { display: none !important; }
-
-@keyframes slideUpFade {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+.footer-link:hover {
+  text-decoration: underline;
 }
 
-/* ==============================================
-   9. MOBILE RESPONSIVE
-================================================= */
+/* Responsive Mobile */
 @media (max-width: 480px) {
-  #renungan, #calendar, #emptyState {
+  #renungan, #emptyState, .calendar-card {
     padding: 20px 16px;
-    border-radius: 20px;
+    border-radius: 18px;
   }
 
-  .calendar-grid {
+  .cal-grid-days {
     gap: 6px;
   }
 
-  .date-cell {
+  .cal-day-cell {
     font-size: 0.85rem;
-    border-radius: 10px;
+    border-radius: 8px;
   }
 }
