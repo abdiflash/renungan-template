@@ -890,13 +890,21 @@
   }
 
   function shareToWhatsApp() {
-    const judul = document.getElementById('displayJudul')?.innerText || '';
-    const ayat = document.getElementById('displayAyat')?.innerText || '';
-    const url = window.location.href;
-    const text = `*${judul}*\n_${ayat}_\n\nMari baca renungan hari ini melalui tautan berikut:\n${url}`;
-    
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
-  }
+  const judul = document.getElementById('displayJudul')?.innerText || 'Renungan Harian';
+  const ayat = document.getElementById('displayAyat')?.innerText || '';
+  const url = window.location.href;
+
+  const text = `🕊️ *Renungan Harian Hari Ini*\n\n` +
+               `*${judul}*\n` +
+               `_${ayat}_\n\n` +
+               `Hari yang baru adalah kesempatan baru untuk berjalan bersama-Nya. Mari sejenak mengambil waktu menenangkan hati dan mengawali hari dengan firman Tuhan yang menguatkan.\n\n` +
+               `🎧 *Tersedia fitur Audio Renungan & Pengatur Ukuran Teks untuk kenyamanan Anda.*\n\n` +
+               `📖 *Baca & Dengarkan Selengkapnya di:*\n` +
+               `${url}\n\n` +
+               `*Jika renungan ini memberkati, bagikan juga kepada keluarga atau sahabat yang membutuhkan penguatan hari ini. Saling mendoakan!* 🙏`;
+
+  window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+}
 
   /* --- LOGIKA PILIHAN NOMINAL & MIDTRANS DONASI --- */
   function openDonationModal() {
