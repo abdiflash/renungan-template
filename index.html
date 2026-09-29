@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Renungan Harian</title>
+
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css?v=3">
+
+  <!-- MIDTRANS SNAP SCRIPT -->
+  <script src="https://app.midtrans.com/snap/snap.js" data-client-key="Mid-client-MK-5yLAVCdP0Yd_o"></script>
+
+  <style>
+    .app-header {
+      background-color: #1b3058 !important;
+    }
+
+    .calendar-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      max-width: 450px;
+      margin: 0 auto;
+    }
+
+    .cal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .cal-header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: #1b3058;
+      font-weight: 700;
+    }
+
+    .btn-cal-nav {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid #1b3058;
+      background: transparent;
+      color: #1b3058;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-cal-nav:hover {
+      background-color: #1b3058;
+      color: #ffffff;
+    }
+
+    .cal-grid-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #888888;
+      margin-bottom: 12px;
+    }
+
+    .cal-grid-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .cal-day-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #b0b0b0;
+      background-color: #f2f2f2;
+      cursor: default;
+      user-select: none;
+      box-sizing: border-box;
+    }
+
+    .cal-day-cell.available {
+      background-color: #dbeafe !important;
+      color: #1b3058 !important;
+      cursor: pointer !important;
+    }
+
+    .cal-day-cell.available:hover {
+      background-color: #bfdbfe !important;
+    }
+
+    .cal-day-cell.disabled-future {
+      background-color: #f2f2f2 !important;
+      color: #c0c0c0 !important;
+      cursor: not-allowed !important;
+      opacity: 0.55;
+    }
+
+    .cal-day-cell.selected {
+      border: 2.5px solid #1b3058;
+      font-weight: 800;
+    }
+
+    .cal-day-cell.empty {
+      background: transparent;
+    }
+
+    .cal-footer {
+      text-align: center;
+      margin-top: 25px;
+    }
+
+    .btn-close-cal {
+      background: #ffffff;
+      border: 2px solid #1b3058;
+      color: #1b3058;
+      border-radius: 25px;
+      padding: 10px 32px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-close-cal:hover {
+      background: #1b3058;
+      color: #ffffff;
+    }
+
+    .btn-nav-day {
+      transition: transform 0.15s ease, opacity 0.2s ease;
+    }
+
+    .btn-nav-day:active:not(:disabled) {
+      transform: scale(0.9);
+    }
+
+    .btn-nav-day:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    /* Transisi Halus Instan */
+    .fade-wrapper {
+      transition: opacity 0.1s ease-in-out;
+      opacity: 1;
+    }
+
+    .fade-wrapper.is-fading {
+      opacity: 0.2;
+    }
+
+    /* Style Kotak & Tombol Donasi Kopi Terbuka */
+    .donation-box {
+      margin-top: 25px;
+      padding: 20px;
+      background-color: #fffdf5;
+      border: 1px solid #fde68a;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.05);
+    }
+
+    .donation-box h4 {
+      margin: 0 0 8px 0;
+      color: #92400e;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .donation-box p {
+      margin: 0 0 14px 0;
+      font-size: 0.88rem;
+      color: #78350f;
+      line-height: 1.5;
+    }
+
+    .donation-box .transparency-note {
+      font-size: 0.78rem;
+      color: #a16207;
+      background: #fef3c7;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      display: inline-block;
+    }
+
+    .btn-donate-coffee {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: #d97706;
+      color: #ffffff;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 22px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(217, 119, 6, 0.3);
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn-donate-coffee:hover {
+      background-color: #b45309;
+    }
+
+    .btn-donate-coffee:active {
+      transform: scale(0.96);
+    }
+
+    /* Modal Donasi Sukarela Midtrans */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 24px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+      text-align: center;
+    }
+
+    .modal-card h3 {
+      margin-top: 0;
+      margin-bottom: 6px;
+      color: #1b3058;
+    }
+
+    .modal-card p.subtitle {
+      font-size: 0.85rem;
+      color: #4b5563;
+      margin-bottom: 18px;
+      line-height: 1.4;
+    }
+
+    /* Quick Chips Traktir Kopi */
+    .amount-chips {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    .chip-btn {
+      flex: 1;
+      padding: 12px 8px;
+      border: 2px solid #e5e7eb;
+      background: #f9fafb;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      color: #374151;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chip-btn span.label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #6b7280;
+    }
+
+    .chip-btn.active {
+      border-color: #d97706;
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    .donation-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .donation-input-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .donation-input-group input,
+    .donation-input-group textarea {
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .donation-input-group textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .btn-modal-cancel {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      background: #f3f4f6;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .btn-modal-submit {
+      flex: 1.5;
+      padding: 12px;
+      border: none;
+      background: #d97706;
+      color: #ffffff;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(217, 119, 6, 0.3);
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="app-header">
+  <h1>Renungan Harian</h1>
+  <p>Tahun Ajaran: <strong id="academicYear">2025/2026</strong></p>
+</header>
+
+<main class="container">
+
+  <!-- Indikator Loading Mini (Top Banner) -->
+  <div id="loader" class="loading hidden" style="padding: 10px; font-size: 14px;">
+    ⏳ Memuat data...
+  </div>
+
+  <!-- Tampilan Kalender -->
+  <section id="calendarSection">
+    <div class="calendar-card">
+      <div class="cal-header">
+        <button class="btn-cal-nav" onclick="changeCalMonth(-1)">◀</button>
+        <h2 id="calMonthYearTitle">September 2026</h2>
+        <button class="btn-cal-nav" onclick="changeCalMonth(1)">▶</button>
+      </div>
+
+      <div class="cal-grid-header">
+        <div>MIN</div>
+        <div>SEN</div>
+        <div>SEL</div>
+        <div>RAB</div>
+        <div>KAM</div>
+        <div>JUM</div>
+        <div>SAB</div>
+      </div>
+
+      <div id="calGridDays" class="cal-grid-days"></div>
+
+      <div class="cal-footer">
+        <button class="btn-close-cal" onclick="closeCalendar()">Tutup Kalender</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wrapper Utama dengan Efek Transisi Ringan -->
+  <div id="contentFadeWrapper" class="fade-wrapper">
+    
+    <!-- Konten Renungan Utama -->
+    <section id="renungan" class="hidden">
+
+      <header>
+        <div class="date-navigation">
+          <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
+          <time class="displayDateText" onclick="openCalendar()" style="cursor: pointer;" title="Klik untuk pilih tanggal"></time>
+          <button class="btn-nav-day btn-nav-next" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
+          <button class="btn-nav-day" onclick="openCalendar()" title="Buka Kalender">📅</button>
+        </div>
+
+        <div class="audio-container">
+          <div class="action-area-top">
+            <div class="font-controls">
+              <button class="btn-font" onclick="changeFontSize(-1)" title="Kecilkan Teks">A-</button>
+              <button class="btn-font" onclick="changeFontSize(1)" title="Besarkan Teks">A+</button>
+            </div>
+
+            <button id="audioControl" class="btn-elegant" onclick="toggleAudio()" style="display:none;">▶️ Putar Audio</button>
+          </div>
+
+          <audio id="audioPlayer" controls class="audio-slider" style="display:none;">
+            <source id="audioSource" src="" type="audio/mpeg">
+          </audio>
+        </div>
+      </header>
+
+      <article id="articleContent">
+        <h3 id="displayJudul"></h3>
+
+        <div class="ayat-box">
+          <span id="displayAyat" class="ayat-ref"></span>
+          <blockquote id="displayAyatText" class="ayat-text"></blockquote>
+        </div>
+
+        <div id="displayIsi"></div>
+
+        <div class="refleksi-box">
+          <div class="refleksi-label">Refleksi</div>
+          <p id="displayRefleksi" class="refleksi-content"></p>
+        </div>
+      </article>
+
+      <!-- Footer Artikel: Bagikan WA -->
+      <div class="article-footer-actions">
+        <button class="btn-share-wa" onclick="shareToWhatsApp()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.842-1.001z"/>
+          </svg>
+          Bagikan Berkat ke WA
+        </button>
+      </div>
+
+      <!-- Kotak Donasi Sukarela Midtrans & Pokok Doa -->
+      <div class="donation-box">
+        <h4>🕊️ Apakah renungan hari ini memberkati Anda?</h4>
+        <p>Mari bergandengan tangan mendukung operasional platform ini agar pesan kebaikan dan penguatan iman terus menjangkau lebih banyak orang setiap hari.</p>
+        
+        <div class="transparency-note">
+          💡 <strong>Transparansi Dukungan:</strong> 100% donasi dialokasikan untuk pemeliharaan server, domain edueasy.id, dan pembaruan fitur audio renungan.
+        </div>
+        <br>
+        <button id="donateBtn" class="btn-donate-coffee" onclick="openDonationModal()">
+          ☕ Traktir Kopi & Kirim Pokok Doa
+        </button>
+      </div>
+
+    </section>
+
+    <!-- Tampilan Jika Data Kosong -->
+    <section id="emptyState" class="hidden">
+      <div class="date-navigation" style="justify-content: center; margin-bottom: 15px;">
+        <button class="btn-nav-day" onclick="navigateDay(-1)" title="Hari Sebelumnya">◀</button>
+        <time class="displayDateText" onclick="openCalendar()" style="cursor: pointer; font-weight: bold; margin: 0 10px;" title="Klik untuk pilih tanggal"></time>
+        <button class="btn-nav-day btn-nav-next" onclick="navigateDay(1)" title="Hari Berikutnya">▶</button>
+        <button class="btn-nav-day" onclick="openCalendar()" title="Buka Kalender">📅</button>
+      </div>
+
+      <div style="text-align: center; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+        <h3 style="margin-top:0; color:#333;">Belum ada renungan untuk tanggal ini.</h3>
+        <p style="color: #666; font-size: 14px; margin-bottom: 0;">Gunakan tombol panah ◀ / ▶ atau buka kalender untuk memilih tanggal.</p>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+<!-- Modal Input Donasi Midtrans & Pokok Doa -->
+<div id="donationModal" class="modal-overlay">
+  <div class="modal-card">
+    <h3>☕ Traktir Kopi & Titip Doa</h3>
+    <p class="subtitle">Pilih dukungan Anda untuk keberlangsungan renungan harian ini:</p>
+
+    <!-- Opsi Pilihan Cepat 10K dan 25K -->
+    <div class="amount-chips">
+      <button type="button" class="chip-btn active" id="chip10" onclick="selectAmount(10000)">
+        ☕ 1 Kopi
+        <span class="label">Rp 10.000</span>
+      </button>
+      <button type="button" class="chip-btn" id="chip25" onclick="selectAmount(25000)">
+        ☕☕ 2 Kopi
+        <span class="label">Rp 25.000</span>
+      </button>
+    </div>
+
+    <!-- Form Input Nama & Pokok Doa -->
+    <div class="donation-input-group">
+      <label for="donorName">Nama / Inisial (Opsional)</label>
+      <input type="text" id="donorName" placeholder="Contoh: hamba Allah / Ibu Maria">
+    </div>
+
+    <div class="donation-input-group">
+      <label for="prayerRequest">Pokok Doa (Opsional)</label>
+      <textarea id="prayerRequest" placeholder="Tuliskan permohonan doa Anda di sini. Kami akan bantu doakan..."></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeDonationModal()">Batal</button>
+      <button class="btn-modal-submit" onclick="submitDonationMidtrans()">Lanjutkan Pembayaran</button>
+    </div>
+  </div>
+</div>
+
+<footer class="app-footer">
+  <p>&copy; 2026 <strong id="footerSchoolName">Sekolah</strong></p>
+  <p><a href="#" id="footerSchoolLink" class="footer-link" target="_blank"></a></p>
+</footer>
+
+<script src="config.js"></script>
+<script>
+  let currentFontSize = 100;
+  let currentActiveDateStr = "";
+  let availableDatesList = JSON.parse(localStorage.getItem('renungan_dates') || '[]');
+  let calViewYear = 2026;
+  let calViewMonth = 8;
+  let currentRequestId = 0;
+  let selectedDonationAmount = 10000; // Default Rp 10.000
+
+  function getTodayStr() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function parseMarkdown(text) {
+    if (!text) return '';
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+      .replace(/\*(.*?)\*/g, '<i>$1</i>');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    if (typeof CONFIG !== 'undefined') {
+      const schName = document.getElementById('footerSchoolName');
+      const schLink = document.getElementById('footerSchoolLink');
+      if (schName && CONFIG.SCHOOL_NAME) schName.innerText = CONFIG.SCHOOL_NAME;
+      if (schLink && CONFIG.SCHOOL_SITE) {
+        schLink.innerText = CONFIG.SCHOOL_SITE;
+        schLink.href = CONFIG.SCHOOL_URL || '#';
+      }
+    }
+
+    const todayStr = getTodayStr();
+    const todayObj = new Date();
+    calViewYear = todayObj.getFullYear();
+    calViewMonth = todayObj.getMonth();
+
+    renderCalendar();
+    loadData(todayStr, true);
+  });
+
+  function parseDate(dateStr) {
+    if (!dateStr) return new Date();
+    let clean = String(dateStr).split('T')[0].split(' ')[0].trim();
+    let parts = clean.split('-');
+    if (parts.length === 3 && parts[0].length === 4) {
+      return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10), 12, 0, 0);
+    }
+    return new Date();
+  }
+
+  function formatDateToString(d) {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function renderDataToUI(data) {
+    document.getElementById('displayJudul').innerText = data.judul || '';
+    document.getElementById('displayAyat').innerText = data.ayatRef || '';
+    document.getElementById('displayAyatText').innerHTML = parseMarkdown(data.ayatText || '');
+    document.getElementById('displayIsi').innerHTML = parseMarkdown(data.isi || '');
+    document.getElementById('displayRefleksi').innerHTML = parseMarkdown(data.refleksi || '');
+
+    if (data.academicYear) {
+      document.getElementById('academicYear').innerText = data.academicYear;
+    }
+
+    const audioPlayer = document.getElementById('audioPlayer');
+    const audioSource = document.getElementById('audioSource');
+    const audioControl = document.getElementById('audioControl');
+
+    if (audioControl) audioControl.innerText = "▶️ Putar Audio";
+    if (data.audio && data.audio.trim() !== '') {
+      if (audioSource) audioSource.src = data.audio;
+      if (audioPlayer) {
+        audioPlayer.load();
+        audioPlayer.style.display = 'block';
+      }
+      if (audioControl) audioControl.style.display = 'inline-block';
+    } else {
+      if (audioPlayer) audioPlayer.style.display = 'none';
+      if (audioControl) audioControl.style.display = 'none';
+    }
+  }
+
+  function updateNextButtonState() {
+    const todayStr = getTodayStr();
+    const isTodayOrFuture = currentActiveDateStr >= todayStr;
+    const nextBtns = document.querySelectorAll('.btn-nav-next');
+    
+    nextBtns.forEach(btn => {
+      btn.disabled = isTodayOrFuture;
+    });
+  }
+
+  function prefetchAdjacentDates(baseDateStr) {
+    if (typeof CONFIG === 'undefined' || !CONFIG.API_URL) return;
+
+    for (let i = 1; i <= 3; i++) {
+      let d = parseDate(baseDateStr);
+      d.setDate(d.getDate() - i);
+      const targetStr = formatDateToString(d);
+
+      if (!localStorage.getItem(`renungan_${targetStr}`)) {
+        fetch(`${CONFIG.API_URL}?date=${targetStr}`)
+          .then(res => res.json())
+          .then(resData => {
+            if (resData.status === 'success' && resData.data) {
+              localStorage.setItem(`renungan_${targetStr}`, JSON.stringify(resData));
+            }
+          })
+          .catch(() => {});
+      }
+    }
+  }
+
+  function loadData(dateStr, isInitialLoad = false) {
+    const todayStr = getTodayStr();
+    if (dateStr > todayStr) return;
+
+    currentActiveDateStr = dateStr;
+    updateDateText(dateStr);
+    updateNextButtonState();
+
+    const requestId = ++currentRequestId;
+    const loader = document.getElementById('loader');
+    const renunganSec = document.getElementById('renungan');
+    const emptySec = document.getElementById('emptyState');
+    const calSec = document.getElementById('calendarSection');
+    const fadeWrapper = document.getElementById('contentFadeWrapper');
+
+    const cachedData = localStorage.getItem(`renungan_${dateStr}`);
+    let hasRenderedCache = false;
+
+    if (cachedData) {
+      try {
+        const parsed = JSON.parse(cachedData);
+        if (parsed && parsed.status === 'success' && parsed.data) {
+          if (loader) loader.classList.add('hidden');
+          if (calSec) calSec.classList.add('hidden');
+          if (emptySec) emptySec.classList.add('hidden');
+          if (renunganSec) renunganSec.classList.remove('hidden');
+          
+          renderDataToUI(parsed.data);
+          if (fadeWrapper) fadeWrapper.classList.remove('is-fading');
+
+          hasRenderedCache = true;
+          prefetchAdjacentDates(dateStr);
+        }
+      } catch (e) {
+        console.error("Cache read error", e);
+      }
+    }
+
+    if (!hasRenderedCache && !isInitialLoad && loader) {
+      loader.classList.remove('hidden');
+    }
+
+    if (typeof CONFIG === 'undefined' || !CONFIG.API_URL) return;
+
+    fetch(`${CONFIG.API_URL}?date=${dateStr}`)
+      .then(res => res.json())
+      .then(resData => {
+        if (requestId !== currentRequestId) return;
+        if (loader) loader.classList.add('hidden');
+
+        if (resData.availableDates) {
+          availableDatesList = resData.availableDates;
+          localStorage.setItem('renungan_dates', JSON.stringify(availableDatesList));
+          renderCalendar();
+        }
+
+        if (resData.status === 'success' && resData.data) {
+          localStorage.setItem(`renungan_${dateStr}`, JSON.stringify(resData));
+          renderDataToUI(resData.data);
+
+          if (calSec) calSec.classList.add('hidden');
+          if (emptySec) emptySec.classList.add('hidden');
+          if (renunganSec) renunganSec.classList.remove('hidden');
+
+          prefetchAdjacentDates(dateStr);
+        } else if (!hasRenderedCache) {
+          if (calSec) calSec.classList.add('hidden');
+          if (renunganSec) renunganSec.classList.add('hidden');
+          if (emptySec) emptySec.classList.remove('hidden');
+        }
+
+        if (fadeWrapper) fadeWrapper.classList.remove('is-fading');
+      })
+      .catch(err => {
+        if (requestId !== currentRequestId) return;
+        console.error("Gagal sinkronisasi data terbaru:", err);
+        if (loader) loader.classList.add('hidden');
+        if (fadeWrapper) fadeWrapper.classList.remove('is-fading');
+      });
+  }
+
+  function updateDateText(dateStr) {
+    const dateObj = parseDate(dateStr);
+    const elems = document.querySelectorAll('.displayDateText');
+
+    if (!dateObj) {
+      elems.forEach(el => { el.innerText = dateStr || ''; });
+      return;
+    }
+
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const formatted = dateObj.toLocaleDateString('id-ID', options);
+
+    elems.forEach(el => {
+      el.innerText = formatted;
+    });
+  }
+
+  function navigateDay(offset) {
+    let baseDate = parseDate(currentActiveDateStr);
+    baseDate.setDate(baseDate.getDate() + offset);
+
+    const targetDateStr = formatDateToString(baseDate);
+    const todayStr = getTodayStr();
+
+    if (targetDateStr > todayStr) return;
+
+    const fadeWrapper = document.getElementById('contentFadeWrapper');
+    if (fadeWrapper) fadeWrapper.classList.add('is-fading');
+    
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    loadData(targetDateStr, false);
+  }
+
+  function openCalendar() {
+    const renunganSec = document.getElementById('renungan');
+    const emptySec = document.getElementById('emptyState');
+    const calSec = document.getElementById('calendarSection');
+
+    if (renunganSec) renunganSec.classList.add('hidden');
+    if (emptySec) emptySec.classList.add('hidden');
+    if (calSec) calSec.classList.remove('hidden');
+
+    const activeObj = parseDate(currentActiveDateStr);
+    calViewYear = activeObj.getFullYear();
+    calViewMonth = activeObj.getMonth();
+
+    renderCalendar();
+  }
+
+  function closeCalendar() {
+    const calSec = document.getElementById('calendarSection');
+    const renunganSec = document.getElementById('renungan');
+    const emptySec = document.getElementById('emptyState');
+
+    if (calSec) calSec.classList.add('hidden');
+
+    const displayJudul = document.getElementById('displayJudul')?.innerText;
+    if (displayJudul && displayJudul.trim() !== '') {
+      if (renunganSec) renunganSec.classList.remove('hidden');
+    } else {
+      if (emptySec) emptySec.classList.remove('hidden');
+    }
+  }
+
+  function changeCalMonth(offset) {
+    calViewMonth += offset;
+    if (calViewMonth < 0) {
+      calViewMonth = 11;
+      calViewYear -= 1;
+    } else if (calViewMonth > 11) {
+      calViewMonth = 0;
+      calViewYear += 1;
+    }
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    const monthNames = [
+      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+
+    document.getElementById('calMonthYearTitle').innerText = `${monthNames[calViewMonth]} ${calViewYear}`;
+
+    const grid = document.getElementById('calGridDays');
+    grid.innerHTML = '';
+
+    const firstDayIndex = new Date(calViewYear, calViewMonth, 1).getDay();
+    const totalDays = new Date(calViewYear, calViewMonth + 1, 0).getDate();
+    const todayStr = getTodayStr();
+
+    for (let i = 0; i < firstDayIndex; i++) {
+      const emptyDiv = document.createElement('div');
+      emptyDiv.className = 'cal-day-cell empty';
+      grid.appendChild(emptyDiv);
+    }
+
+    for (let d = 1; d <= totalDays; d++) {
+      const mmStr = String(calViewMonth + 1).padStart(2, '0');
+      const ddStr = String(d).padStart(2, '0');
+      const dateKey = `${calViewYear}-${mmStr}-${ddStr}`;
+
+      const cell = document.createElement('div');
+      cell.className = 'cal-day-cell';
+      cell.innerText = d;
+
+      const isFuture = dateKey > todayStr;
+      const isAvailable = availableDatesList.includes(dateKey);
+
+      if (isFuture) {
+        cell.classList.add('disabled-future');
+      } else if (isAvailable) {
+        cell.classList.add('available');
+        cell.onclick = function() {
+          const fadeWrapper = document.getElementById('contentFadeWrapper');
+          if (fadeWrapper) fadeWrapper.classList.add('is-fading');
+          loadData(dateKey, false);
+        };
+      }
+
+      if (dateKey === currentActiveDateStr) {
+        cell.classList.add('selected');
+      }
+
+      grid.appendChild(cell);
+    }
+  }
+
+  function changeFontSize(step) {
+    currentFontSize += step * 10;
+    if (currentFontSize < 80) currentFontSize = 80;
+    if (currentFontSize > 160) currentFontSize = 160;
+    
+    const target = document.getElementById('articleContent');
+    if (target) {
+      target.style.fontSize = currentFontSize + '%';
+    }
+  }
+
+  function toggleAudio() {
+    const player = document.getElementById('audioPlayer');
+    const btn = document.getElementById('audioControl');
+    if (!player) return;
+
+    if (player.paused) {
+      player.play();
+      if (btn) btn.innerText = "⏸️ Jeda Audio";
+    } else {
+      player.pause();
+      if (btn) btn.innerText = "▶ Putar Audio";
+    }
+  }
+
+  function shareToWhatsApp() {
+    const judul = document.getElementById('displayJudul')?.innerText || '';
+    const ayat = document.getElementById('displayAyat')?.innerText || '';
+    const url = window.location.href;
+    const text = `*${judul}*\n_${ayat}_\n\nMari baca renungan hari ini melalui tautan berikut:\n${url}`;
+    
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+  }
+
+  /* --- LOGIKA PILIHAN NOMINAL & MIDTRANS DONASI --- */
+  function openDonationModal() {
+    document.getElementById('donationModal').classList.add('active');
+  }
+
+  function closeDonationModal() {
+    document.getElementById('donationModal').classList.remove('active');
+  }
+
+  function selectAmount(amount) {
+    selectedDonationAmount = amount;
+    document.getElementById('chip10').classList.toggle('active', amount === 10000);
+    document.getElementById('chip25').classList.toggle('active', amount === 25000);
+  }
+
+  async function submitDonationMidtrans() {
+    const donorName = document.getElementById('donorName').value.trim();
+    const prayerRequest = document.getElementById('prayerRequest').value.trim();
+    const btnDonate = document.getElementById('donateBtn');
+    const originalText = btnDonate.innerText;
+
+    try {
+      btnDonate.innerText = "⏳ Memproses...";
+      btnDonate.disabled = true;
+      closeDonationModal();
+
+      const response = await fetch('https://edueasy.id/wp-json/photobooth/v1/create-snap-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          amount: selectedDonationAmount,
+          donor_name: donorName || "Anonim",
+          prayer_request: prayerRequest
+        })
+      });
+
+      if (!response.ok) throw new Error(`Server status ${response.status}`);
+      const data = await response.json();
+
+      if (!data || !data.token) {
+        alert("Gagal mengambil token pembayaran.");
+        return;
+      }
+
+      if (typeof snap !== 'undefined' && snap.pay) {
+        window.snap.pay(data.token, {
+          onSuccess: function(result) {
+            alert("Terima kasih atas dukungan dan kepercayaan Anda! Pokok doa Anda telah kami terima. Tuhan memberkati! 🕊️");
+          },
+          onPending: function(result) {
+            alert("Menunggu penyelesaian pembayaran Anda...");
+          },
+          onError: function(result) {
+            alert("Pembayaran donasi gagal.");
+          },
+          onClose: function() {
+            console.log("Popup Midtrans ditutup.");
+          }
+        });
+      } else {
+        alert("Library Midtrans Snap tidak siap.");
+      }
+
+    } catch (err) {
+      console.error("Midtrans Error:", err);
+      alert("Gagal terhubung ke server pembayaran Midtrans.");
+    } finally {
+      btnDonate.innerText = originalText;
+      btnDonate.disabled = false;
+    }
+  }
+</script>
+
+</body>
+</html>
