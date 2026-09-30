@@ -431,7 +431,7 @@
       <!-- Kotak Donasi Sukarela Midtrans -->
       <div class="donation-box">
         <h4>🕊️ Apakah renungan hari ini memberkati Anda?</h4>
-        <p>Mari bergandengan tangan mendukung operasional platform ini agar pesan kebaikan dan penguatan iman terus menjangkau lebih banyak orang setiap hari.</p>
+        <p>Mari bergandengan tangan mendukung operasional platform ini agar pesan kebaikan dan penguatan iman terus menjangkau lebih banyak orang.</p>
         
         <div class="transparency-note">
           💡 <strong>Transparansi Dukungan:</strong> 100% donasi dialokasikan untuk pemeliharaan server, domain edueasy.id, dan pembaruan fitur audio renungan.
@@ -890,15 +890,15 @@
       btnDonate.disabled = true;
       closeDonationModal();
 
-      const response = await fetch('https://edueasy.id/wp-json/photobooth/v1/create-snap-token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          amount: selectedDonationAmount,
-          donor_name: "Anonim",
-          prayer_request: ""
-        })
-      });
+      const response = await fetch('https://edueasy.id/wp-json/donasi/v1/create-snap-token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        amount: selectedDonationAmount,
+        donor_name: "Anonim",
+        prayer_request: ""
+    })
+});
 
       if (!response.ok) throw new Error(`Server status ${response.status}`);
       const data = await response.json();
